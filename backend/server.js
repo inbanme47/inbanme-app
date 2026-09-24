@@ -13,11 +13,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// CẤU HÌNH PHỤC VỤ FILE TĨNH (HTML, CSS, JS, UPLOADS)
-app.use(express.static(path.join(__dirname)));
+// CẤU HÌNH PHỤC VỤ FILE TĨNH DÀNH CHO CẤU TRÚC THƯ MỤC BACKEND
+// Trỏ ra thư mục gốc chứa file index.html và admin.html
+const rootDir = path.join(__dirname, '..');
+app.use(express.static(rootDir));
 
 // Cấu hình thư mục uploads
-const uploadDir = path.join(__dirname, 'uploads');
+const uploadDir = path.join(rootDir, 'uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -41,17 +43,17 @@ mongoose.connect(MONGO_URI)
     .catch(err => console.error("❌ Lỗi kết nối MongoDB:", err));
 
 // ==========================================
-// THÊM ROUTE HIỂN THỊ GIAO DIỆN (SỬA LỖI CANNOT GET /)
+// ROUTE TRẢ VỀ GIAO DIỆN WEB
 // ==========================================
 
-// Trang chủ hiển thị index.html
+// Trang chủ hiển thị index.html (Trỏ ra thư mục cha)
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(rootDir, 'index.html'));
 });
 
-// Trang quản trị hiển thị admin.html
+// Trang quản trị hiển thị admin.html (Trỏ ra thư mục cha)
 app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin.html'));
+    res.sendFile(path.join(rootDir, 'admin.html'));
 });
 
 // Ping check
@@ -63,7 +65,6 @@ app.get('/api/ping', (req, res) => {
 // 1. API CHO KHÁCH HÀNG (PUBLIC API)
 // ==========================================
 
-// Lấy danh sách sản phẩm
 app.get('/api/products', async (req, res) => {
     try {
         const products = await Product.find().sort({ createdAt: -1 });
@@ -73,7 +74,6 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
-// Khách hàng gửi đơn
 app.post('/api/orders', (req, res, next) => {
     upload.single('file')(req, res, (err) => {
         if (err) console.error("Multer error:", err);
