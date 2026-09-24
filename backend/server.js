@@ -48,11 +48,10 @@ app.get('/admin', (req, res) => res.sendFile(path.join(adminPath, 'index.html'))
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 // 1. Phục vụ giao diện Customer ở trang chủ '/'
-const customerPath = path.join(__dirname, '../frontend-customer');
 app.use(express.static(customerPath));
 
 // 2. Phục vụ giao diện Admin ở đường dẫn '/admin'
-const adminPath = path.join(__dirname, '../frontend-admin'); // Thư mục chứa code admin của bạn
+
 app.use('/admin', express.static(adminPath));
 
 // Trang chủ Customer
