@@ -10,8 +10,19 @@ const PORT = 5000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+;
+// Cấu hình đường dẫn tới thư mục frontend-customer
+// Lưu ý: Tùy vào vị trí thư mục backend và frontend-customer trong dự án của bạn:
+// Nếu frontend-customer nằm cùng cấp với backend:
+const frontendPath = path.join(__dirname, '../frontend-customer');
 
+// Cho phép Express tải các file static (CSS, JS, Hình ảnh) từ frontend-customer
+app.use(express.static(frontendPath));
 
+// Khi truy cập trang chủ (/), trả về file index.html của frontend-customer
+app.get('/', (req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+});
 // Tự động tạo thư mục 'uploads' nếu chưa có
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
@@ -135,9 +146,7 @@ app.delete('/api/admin/products/:id', (req, res) => {
     products = products.filter(p => p.id !== id);
     res.json({ success: true, message: 'Đã xóa sản phẩm' });
 });
-app.get('/', (req, res) => {
-  res.send('API In Ban Mê đang hoạt động bình thường!');
-});
+
 // Khởi chạy Server
 app.listen(PORT, () => {
     console.log(`=================================`);
