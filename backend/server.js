@@ -13,13 +13,17 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// CẤU HÌNH PHỤC VỤ FILE TĨNH DÀNH CHO CẤU TRÚC THƯ MỤC BACKEND
-// Trỏ ra thư mục gốc chứa file index.html và admin.html
-const rootDir = path.join(__dirname, '..');
-app.use(express.static(rootDir));
+// TỰ ĐỘNG TÌM THƯ MỤC CHỨA FILE INDEX.HTML
+let publicDir = __dirname;
+if (!fs.existsSync(path.join(publicDir, 'index.html')) && fs.existsSync(path.join(__dirname, '..', 'index.html'))) {
+    publicDir = path.join(__dirname, '..');
+}
+
+// Phục vụ các file tĩnh (HTML, CSS, JS)
+app.use(express.static(publicDir));
 
 // Cấu hình thư mục uploads
-const uploadDir = path.join(rootDir, 'uploads');
+const uploadDir = path.join(publicDir, 'uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -46,14 +50,24 @@ mongoose.connect(MONGO_URI)
 // ROUTE TRẢ VỀ GIAO DIỆN WEB
 // ==========================================
 
-// Trang chủ hiển thị index.html (Trỏ ra thư mục cha)
+// Trang chủ
 app.get('/', (req, res) => {
-    res.sendFile(path.join(rootDir, 'index.html'));
+    const indexPath = path.join(publicDir, 'index.html');
+    if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+    } else {
+        res.status(404).send("Lỗi: Không tìm thấy file index.html trên server!");
+    }
 });
 
-// Trang quản trị hiển thị admin.html (Trỏ ra thư mục cha)
+// Trang quản trị Admin
 app.get('/admin', (req, res) => {
-    res.sendFile(path.join(rootDir, 'admin.html'));
+    const adminPath = path.join(publicDir, 'admin.html');
+    if (fs.existsSync(adminPath)) {
+        res.sendFile(adminPath);
+    } else {
+        res.status(404).send("Lỗi: Không tìm thấy file admin.html trên server!");
+    }
 });
 
 // Ping check
