@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IN BAN MÊ - In Ấn Theo Yêu Cầu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { yellow: '#FACC15', hover: '#EAB308', dark: '#121212', card: '#1E1E1E', border: '#2E2E2E' }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-brand-dark text-gray-200 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-brand-dark/95 backdrop-blur border-b border-brand-border">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="#" class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-brand-yellow text-brand-dark font-black rounded-xl flex items-center justify-center text-xl">B</div>
+                <div>
+                    <span class="block text-lg font-black text-white leading-none">IN BAN MÊ</span>
+                    <span class="block text-[10px] font-bold text-brand-yellow uppercase mt-0.5">IN ẤN THEO YÊU CẦU</span>
+                </div>
+            </a>
+            <button type="button" onclick="sendDirectZalo()" class="w-full sm:w-auto bg-brand-yellow hover:bg-brand-hover text-brand-dark font-extrabold text-sm px-6 py-3.5 rounded-xl shadow-lg transition flex items-center justify-center">
+                            <i class="fas fa-comment mr-1.5"></i> Báo Giá Zalo Ngay
+                        </button>
+
+        </div>
+    </header>
+
+    <main class="space-y-12 pb-20">
+        <!-- Hero Section -->
+        <section class="py-12 border-b border-brand-border bg-gradient-to-b from-brand-dark to-brand-card text-center px-6">
+            <span class="inline-flex items-center space-x-2 bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20 font-bold text-xs px-3.5 py-1.5 rounded-full">
+                <i class="fas fa-star text-xs"></i> <span>Xưởng In Trực Tiếp Tại Buôn Ma Thuột</span>
+            </span>
+            <h1 class="text-3xl sm:text-5xl font-black text-white leading-tight pt-6">
+                IN ẤN CHUYÊN NGHIỆP THEO YÊU CẦU <br>
+                <span class="text-brand-yellow">"Logo đẹp - Thương hiệu nổi bật - Khách nhớ lâu!"</span>
+            </h1>
+            <p class="text-base font-semibold italic text-gray-300 mt-3">Chuyên nhận thiết kế & in ấn ly nhựa, Ly giấy, danh thiếp, túi xốp, tem nhãn bao bì giá tốt nhất tại BMT & giao hàng toàn quốc.</p>
+        
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <a href="#quick-quote" class="w-full sm:w-auto bg-brand-yellow hover:bg-brand-hover text-brand-dark font-extrabold text-sm px-6 py-3.5 rounded-xl shadow-lg transition flex items-center justify-center">
+                    <i class="fas fa-paper-plane mr-2"></i> Gửi Yêu Cầu Báo Giá
+                </a>
+                <a href="tel:0377441499" class="w-full sm:w-auto bg-brand-card hover:bg-gray-800 text-white border border-brand-border font-bold text-sm px-6 py-3.5 rounded-xl transition flex items-center justify-center">
+                    <i class="fas fa-phone-alt mr-2 text-brand-yellow"></i> Hotline: 0377.441.499
+                </a>
+            </div>
+        </section>
+
+        <!-- Features Banner -->
+        <section class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-brand-card border border-brand-border p-4 rounded-xl flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-brand-yellow/10 text-brand-yellow rounded-lg flex items-center justify-center text-lg shrink-0">
+                        <i class="fas fa-pencil-ruler"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs text-white">Miễn Phí Thiết Kế</h4>
+                        <p class="text-[11px] text-gray-400">Hỗ trợ vẽ logo & slogan</p>
+                    </div>
+                </div>
+                <div class="bg-brand-card border border-brand-border p-4 rounded-xl flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-brand-yellow/10 text-brand-yellow rounded-lg flex items-center justify-center text-lg shrink-0">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs text-white">Chất Liệu Đạt Chuẩn</h4>
+                        <p class="text-[11px] text-gray-400">Bền bỉ cùng thời gian – An toàn cùng sức khỏe.</p>
+                    </div>
+                </div>
+                <div class="bg-brand-card border border-brand-border p-4 rounded-xl flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-brand-yellow/10 text-brand-yellow rounded-lg flex items-center justify-center text-lg shrink-0">
+                        <i class="fas fa-truck-fast"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs text-white">Giao Hàng Nhanh</h4>
+                        <p class="text-[11px] text-gray-400">Nội thành BMT & Toàn quốc</p>
+                    </div>
+                </div>
+                <div class="bg-brand-card border border-brand-border p-4 rounded-xl flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-brand-yellow/10 text-brand-yellow rounded-lg flex items-center justify-center text-lg shrink-0">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs text-white">Giá Tại Xưởng</h4>
+                        <p class="text-[11px] text-gray-400">Ưu đãi cho số lượng lớn</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRODUCT SECTION -->
+        <section class="max-w-7xl mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
+                <h2 class="text-xl font-black text-white uppercase">MẪU IN ẤN NỔI BẬT</h2>
+            </div>
+            
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="col-span-full text-center py-12 text-gray-500">
+                    <i class="fas fa-spinner fa-spin text-2xl mb-2 text-brand-yellow"></i>
+                    <p>Đang tải danh sách sản phẩm mới nhất...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Order / Quote Form -->
+        <section id="quick-quote" class="max-w-3xl mx-auto px-4">
+            <div class="bg-brand-card border border-brand-border p-6 sm:p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div class="absolute -top-12 -right-12 w-32 h-32 bg-brand-yellow/5 rounded-full blur-2xl"></div>
+                
+                <div class="text-center mb-6">
+                    <span class="text-brand-yellow font-bold text-xs uppercase tracking-widest">ĐẶT IN NHANH CHÓNG</span>
+                    <h3 class="text-2xl font-black text-white mt-1">GỬI YÊU CẦU BÁO GIÁ</h3>
+                    <p class="text-xs text-gray-400 mt-1">Gửi thông tin ngay, nhân viên tư vấn sẽ liên hệ lại Zalo báo giá trong 5 phút!</p>
+                </div>
+
+                <form onsubmit="handleOrderSubmit(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Họ và tên *</label>
+                            <input type="text" id="order-fullname" required placeholder="Nhập tên của bạn" class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-yellow transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Số điện thoại / Zalo *</label>
+                            <input type="tel" id="order-phone" required placeholder="Nhập SĐT để nhận báo giá" class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-yellow transition">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Sản phẩm cần in *</label>
+                            <select id="order-product" required class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-yellow transition">
+                                <option value="">-- Chọn loại sản phẩm --</option>
+                                <option value="Ly Nhựa PP/PET">In Ly Nhựa (PP, PET)</option>
+                                <option value="Namecard / Card visit">In Namecard / Card Visit</option>
+                                <option value="Túi Xốp PE / Zipper">In Bao Bì / Túi Xốp PE</option>
+                                <option value="Tem Nhãn Decal">In Tem Nhãn / Thiệp</option>
+                                <option value="Sản phẩm khác">Khác (In ấn theo yêu cầu)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Số lượng dự kiến *</label>
+                            <input type="text" id="order-qty" required placeholder="VD: 1.000 cái, 5 hộp..." class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-yellow transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Ghi chú yêu cầu / Link File Thiết Kế</label>
+                        <textarea id="order-note" rows="3" placeholder="Yêu cầu in ấn hoặc dán link Google Drive/Zalo chứa logo..." class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-yellow transition"></textarea>
+                    </div>
+
+                    <div class="pt-2 flex flex-col sm:flex-row gap-3">
+                        <button type="submit" class="flex-1 bg-brand-yellow hover:bg-brand-hover text-brand-dark font-black py-3.5 rounded-xl shadow transition text-sm uppercase flex items-center justify-center">
+                            <i class="fas fa-paper-plane mr-2"></i> Gửi Yêu Cầu Ngay
+                        </button>
+                        
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-card border-t border-brand-border py-8 text-xs text-gray-400">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+            <div>
+                <p class="font-bold text-white text-sm">IN BAN MÊ - IN ẤN THEO YÊU CẦU</p>
+                <p class="mt-0.5">📍 Địa chỉ: Đường 10/3, Phường Buôn Ma Thuột, Tỉnh Đắk Lắk</p>
+                <p class="mt-0.5">📞 Hotline / Zalo đặt in: <a href="tel:0377441499" class="text-brand-yellow font-bold">0377.441.499</a></p>
+            </div>
+            <div class="text-gray-500 text-[11px]">
+                <p>© 2026 IN BAN MÊ. Mọi quyền được bảo lưu.</p>
+                <p class="mt-1">Hệ thống tự động bảo mật dữ liệu Khách hàng.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification UI -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- JS CONNECT TO BACKEND API -->
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+        let products = [];
+        let selectedCategory = 'ALL';
+
+        // TỰ ĐỘNG LẤY SẢN PHẨM KHI TRANG MỞ XONG
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+        });
+
+        // TẢI SẢN PHẨM TỪ BACKEND
+        async function loadProducts() {
+            try {
+                const res = await fetch(`${API_BASE}/products`);
+                const data = await res.json();
+                if (data.success) {
+                    products = data.data || [];
+                    renderProducts();
+                }
+            } catch (err) {
+                document.getElementById('product-grid').innerHTML = `
+                    <div class="col-span-full text-center py-8 text-red-400">
+                        <i class="fas fa-exclamation-triangle text-xl mb-1"></i>
+                        <p class="font-bold text-sm">Không thể kết nối với Máy Chủ Backend (http://localhost:5000)!</p>
+                        <p class="text-xs text-gray-500 mt-1">Vui lòng kiểm tra file server.js đã được khởi chạy chưa.</p>
+                    </div>
+                `;
+            }
+        }
+
+        
+        // HIỂN THỊ DỮ LIỆU RA GIAO DIỆN KHI LƯU TỪ ADMIN
+        function renderProducts() {
+    const container = document.getElementById('product-grid');
+    
+    const filtered = selectedCategory === 'ALL' 
+        ? products 
+        : products.filter(p => p.category === selectedCategory);
+
+    if (filtered.length === 0) {
+        container.innerHTML = `<p class="col-span-full text-center text-gray-500 py-8">Chưa có sản phẩm nào trong danh mục này.</p>`;
+        return;
+    }
+
+    container.innerHTML = filtered.map(p => `
+        <div class="bg-brand-card border border-brand-border rounded-2xl p-4 flex flex-col justify-between hover:border-brand-yellow/50 transition duration-300 group">
+            <div>
+                <!-- Hiển thị Hình ảnh sản phẩm -->
+                <div class="w-full h-48 bg-brand-dark rounded-xl overflow-hidden mb-4 relative">
+                    <img src="${p.imageUrl || 'https://via.placeholder.com/300x200?text=In+Ban+Me'}" 
+                         alt="${p.title}" 
+                         class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <span class="absolute top-2 right-2 text-[10px] bg-brand-dark/90 backdrop-blur border border-brand-border text-brand-yellow font-bold px-2.5 py-1 rounded-full uppercase">
+                        ${p.category || 'Dịch vụ'}
+                    </span>
+                </div>
+
+                <h3 class="font-bold text-white text-base group-hover:text-brand-yellow transition">${p.title}</h3>
+                <p class="text-xs text-gray-400 mt-2 line-clamp-2">${p.desc || 'Chuyên nhận thiết kế & in ấn theo yêu cầu giá xưởng.'}</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-brand-border flex items-center justify-between">
+                <span class="text-xs text-brand-yellow font-bold">${p.priceNote || 'Giá ưu đãi'}</span>
+                <a href="#quick-quote" onclick="selectProductToQuote('${p.title}')" class="bg-brand-dark hover:bg-brand-yellow hover:text-brand-dark text-white border border-brand-border text-xs px-3 py-1.5 rounded-lg transition font-semibold">
+                    Đặt In
+                </a>
+            </div>
+        </div>
+    `).join('');
+}
+
+        // TỰ ĐỘNG ĐIỀN TÊN SẢN PHẨM VÀO FORM KHI BẤM "ĐẶT IN"
+        function selectProductToQuote(title) {
+            const selectEl = document.getElementById('order-product');
+            for (let i = 0; i < selectEl.options.length; i++) {
+                if (title.toLowerCase().includes(selectEl.options[i].value.toLowerCase())) {
+                    selectEl.selectedIndex = i;
+                    return;
+                }
+            }
+            selectEl.value = 'Sản phẩm khác';
+        }
+
+        // TẠO ĐƠN HÀNG MỚI
+        async function handleOrderSubmit(e) {
+            e.preventDefault();
+            const payload = {
+                fullname: document.getElementById('order-fullname').value,
+                phone: document.getElementById('order-phone').value,
+                product: document.getElementById('order-product').value,
+                quantity: document.getElementById('order-qty').value,
+                note: document.getElementById('order-note').value
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    showToast(`Gửi đơn thành công! Mã đơn: ${data.data.id || data.data._id}`, 'success');
+                    e.target.reset();
+                } else {
+                    showToast(data.message || 'Có lỗi xảy ra, vui lòng thử lại', 'error');
+                }
+            } catch (err) {
+                showToast('Không thể kết nối đến máy chủ!', 'error');
+            }
+        }
+
+        // MỞ TRỰC TIẾP ZALO BÁO GIÁ
+        function sendDirectZalo() {
+            const phone = document.getElementById('order-phone').value || '';
+            const product = document.getElementById('order-product').value || 'In ấn';
+            const note = document.getElementById('order-note').value || '';
+            const message = `Chào In Ban Mê, tôi cần tư vấn báo giá: ${product}. SĐT: ${phone}. Ghi chú: ${note}`;
+            window.open(`https://zalo.me/0377441499?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        // HIỂN THỊ TOAST THÔNG BÁO
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const isSuccess = type === 'success';
+            const bgColor = isSuccess ? 'bg-emerald-600' : 'bg-red-600';
+            const icon = isSuccess ? 'fa-circle-check' : 'fa-circle-xmark';
+
+            const toast = document.createElement('div');
+            toast.className = `${bgColor} text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform translate-y-[-10px] opacity-0 pointer-events-auto border border-white/20`;
+            toast.innerHTML = `
+                <i class="fas ${icon} text-lg"></i>
+                <span class="text-sm font-semibold">${message}</span>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-[-10px]', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-[-10px]', 'opacity-0');
+                setTimeout(() => toast.remove(), 400);
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
