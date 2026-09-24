@@ -71,12 +71,12 @@ app.use(express.static(customerPath));
 app.use('/admin', express.static(adminPath));
 
 // Route Catch-all trả về trang giao diện
-
-app.get('/admin/:splat*', (req, res) => {
+// Dùng Regex chuẩn để bắt tất cả sub-route mà không bị lỗi path-to-regexp
+app.get(/^\/admin\/(.*)/, (req, res) => {
     res.sendFile(path.join(adminPath, 'admin.html'));
 });
 
-app.get('/:splat*', (req, res) => {
+app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(customerPath, 'index.html'));
 });
 
