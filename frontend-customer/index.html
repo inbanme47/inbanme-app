@@ -198,6 +198,9 @@
         let products = [];
         let selectedCategory = 'ALL';
 
+        app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
         // TỰ ĐỘNG LẤY SẢN PHẨM KHI TRANG MỞ XONG
         document.addEventListener('DOMContentLoaded', () => {
             loadProducts();

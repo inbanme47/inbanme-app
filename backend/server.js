@@ -6,10 +6,11 @@ const multer = require('multer');
 const mongoose = require('mongoose');
 const app = express();
 const PORT = 5000;
-
+const path = require('path');
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Tự động tạo thư mục 'uploads' nếu chưa có
 const uploadDir = path.join(__dirname, 'uploads');
@@ -134,7 +135,9 @@ app.delete('/api/admin/products/:id', (req, res) => {
     products = products.filter(p => p.id !== id);
     res.json({ success: true, message: 'Đã xóa sản phẩm' });
 });
-
+app.get('/', (req, res) => {
+  res.send('API In Ban Mê đang hoạt động bình thường!');
+});
 // Khởi chạy Server
 app.listen(PORT, () => {
     console.log(`=================================`);
@@ -172,6 +175,3 @@ app.post('/api/admin/orders/archive-completed', async (req, res) => {
     }
 });
 
-app.get('/', (req, res) => {
-  res.send('API In Ban Mê đang hoạt động bình thường!');
-});
