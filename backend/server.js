@@ -6,7 +6,7 @@ const multer = require('multer');
 const mongoose = require('mongoose');
 const app = express();
 const Order = require('./models/Order');
-const PORT = 5000;
+
 
 //  KẾT NỐI MONGODB ATLAS
 const MONGO_URI = process.env.MONGO_URI || "CHUỖI_KẾT_NỐI_MONGODB_CỦA_BẠN";
