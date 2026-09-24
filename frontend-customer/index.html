@@ -194,7 +194,7 @@
 
     <!-- JS CONNECT TO BACKEND API -->
     <script>
-        const API_BASE = 'http://localhost:5000/api';
+        const API_BASE = '[https://in-ban-me.onrender.com](https://in-ban-me.onrender.com)';
         let products = [];
         let selectedCategory = 'ALL';
 
@@ -217,7 +217,7 @@
                 document.getElementById('product-grid').innerHTML = `
                     <div class="col-span-full text-center py-8 text-red-400">
                         <i class="fas fa-exclamation-triangle text-xl mb-1"></i>
-                        <p class="font-bold text-sm">Không thể kết nối với Máy Chủ Backend (http://localhost:5000)!</p>
+                        <p class="font-bold text-sm">Không thể kết nối với Máy Chủ Backend ([https://in-ban-me.onrender.com](https://in-ban-me.onrender.com))!</p>
                         <p class="text-xs text-gray-500 mt-1">Vui lòng kiểm tra file server.js đã được khởi chạy chưa.</p>
                     </div>
                 `;
