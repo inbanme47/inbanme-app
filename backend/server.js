@@ -71,11 +71,12 @@ app.use(express.static(customerPath));
 app.use('/admin', express.static(adminPath));
 
 // Route Catch-all trả về trang giao diện
-app.get('/admin/*', (req, res) => {
+
+app.get('/admin/:splat*', (req, res) => {
     res.sendFile(path.join(adminPath, 'admin.html'));
 });
 
-app.get('*', (req, res) => {
+app.get('/:splat*', (req, res) => {
     res.sendFile(path.join(customerPath, 'index.html'));
 });
 
