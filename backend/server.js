@@ -171,3 +171,7 @@ app.post('/api/admin/orders/archive-completed', async (req, res) => {
         res.status(500).json({ success: false, message: 'Lỗi máy chủ khi lưu trữ đơn' });
     }
 });
+
+app.get('/', (req, res) => {
+  res.send('API In Ban Mê đang hoạt động bình thường!');
+});
