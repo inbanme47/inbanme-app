@@ -4,59 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trang Quản Trị Viên - IN BAN MÊ</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            yellow: '#FACC15',
-                            hover: '#EAB308',
-                            dark: '#121212',
-                            card: '#1E1E1E',
-                            border: '#2E2E2E',
-                            accent: '#27272A'
-                        }
+                        brand: { yellow: '#FACC15', hover: '#EAB308', dark: '#121212', card: '#1E1E1E', border: '#2E2E2E' }
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
                 }
             }
         }
     </script>
     <style>
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #121212;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #2E2E2E;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #FACC15;
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #121212; }
+        ::-webkit-scrollbar-thumb { background: #2E2E2E; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #FACC15; }
     </style>
 </head>
-<body class="bg-brand-dark text-gray-200 font-sans antialiased selection:bg-brand-yellow selection:text-brand-dark min-h-screen flex flex-col justify-between">
+<body class="bg-brand-dark text-gray-200 font-sans antialiased min-h-screen flex flex-col justify-between">
 
-    <!-- ========================================== -->
-    <!-- MÀN HÌNH ĐĂNG NHẬP (LOGIN OVERLAY) -->
-    <!-- ========================================== -->
+    <!-- MÀN HÌNH ĐĂNG NHẬP -->
     <div id="login-overlay" class="fixed inset-0 z-50 bg-brand-dark flex items-center justify-center p-4">
         <div class="bg-brand-card border border-brand-border w-full max-w-md rounded-2xl shadow-2xl p-8 space-y-6">
             <div class="text-center space-y-2">
-                <div class="w-16 h-16 bg-brand-yellow text-brand-dark font-black rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-xl shadow-brand-yellow/10">
+                <div class="w-16 h-16 bg-brand-yellow text-brand-dark font-black rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-xl">
                     B
                 </div>
                 <h2 class="text-2xl font-black text-white tracking-tight mt-3">ĐĂNG NHẬP QUẢN TRỊ</h2>
@@ -85,15 +61,13 @@
                             <i class="fas fa-lock"></i>
                         </span>
                         <input type="password" id="login-password" required placeholder="Nhập mật khẩu" class="w-full bg-brand-dark border border-brand-border text-white text-sm rounded-xl pl-10 pr-10 py-3 focus:outline-none focus:border-brand-yellow transition">
-                        
-                        <!-- NÚT ẨN/HIỆN MẬT KHẨU -->
-                        <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-400 hover:text-brand-yellow transition focus:outline-none">
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-400 hover:text-brand-yellow transition">
                             <i id="toggle-password-icon" class="fas fa-eye"></i>
                         </button>
                     </div>
                 </div>
 
-                <button type="submit" class="w-full bg-brand-yellow hover:bg-brand-hover text-brand-dark font-black py-3 rounded-xl transition shadow-lg shadow-brand-yellow/10 text-sm uppercase tracking-wider mt-2">
+                <button type="submit" class="w-full bg-brand-yellow hover:bg-brand-hover text-brand-dark font-black py-3 rounded-xl transition shadow-lg text-sm uppercase tracking-wider mt-2">
                     <i class="fas fa-right-to-bracket mr-2"></i> Đăng Nhập
                 </button>
             </form>
@@ -104,22 +78,19 @@
     <header class="sticky top-0 z-40 bg-brand-dark/95 backdrop-blur border-b border-brand-border">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-brand-yellow text-brand-dark font-black rounded-xl flex items-center justify-center text-xl shadow-lg shadow-brand-yellow/10">
+                <div class="w-10 h-10 bg-brand-yellow text-brand-dark font-black rounded-xl flex items-center justify-center text-xl shadow-lg">
                     B
                 </div>
                 <div>
-                    <span class="block text-lg sm:text-xl font-black text-white leading-none tracking-tight">IN BAN MÊ</span>
-                    <span class="block text-[10px] font-bold text-brand-yellow uppercase tracking-wider mt-0.5">BẢNG ĐIỀU KHIỂN</span>
+                    <span class="block text-lg font-black text-white leading-none">IN BAN MÊ</span>
+                    <span class="block text-[10px] font-bold text-brand-yellow uppercase mt-0.5">BẢNG ĐIỀU KHIỂN</span>
                 </div>
             </div>
 
             <div class="flex items-center space-x-3">
-                <!-- NÚT LÀM MỚI & DỌN ĐƠN HOÀN THÀNH -->
                 <button onclick="handleRefreshData()" class="bg-brand-yellow hover:bg-brand-hover text-brand-dark font-extrabold text-xs px-3.5 py-2 rounded-xl transition flex items-center shadow">
                     <i class="fas fa-rotate mr-1.5"></i> Làm Mới Dữ Liệu
                 </button>
-
-                <!-- Nút Đăng Xuất -->
                 <button onclick="handleLogout()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 font-extrabold text-xs px-3.5 py-2 rounded-xl transition flex items-center">
                     <i class="fas fa-sign-out-alt mr-1.5"></i> Đăng Xuất
                 </button>
@@ -127,10 +98,9 @@
         </div>
     </header>
 
-    <!-- Main Admin Content Container -->
+    <!-- Main Content -->
     <main class="flex-1 max-w-7xl mx-auto w-full px-4 py-8 space-y-8">
         
-        <!-- Top Title Bar -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-brand-border pb-5 gap-4">
             <div>
                 <span class="text-xs font-bold text-brand-yellow uppercase tracking-widest">HỆ THỐNG QUẢN TRỊ VIÊN</span>
@@ -138,7 +108,7 @@
             </div>
         </div>
 
-        <!-- Dashboard Stats Summary -->
+        <!-- Dashboard Stats -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-brand-card border border-brand-border p-5 rounded-2xl flex items-center justify-between">
                 <div>
@@ -181,7 +151,7 @@
             </div>
         </div>
 
-        <!-- Admin Tabs Navigation -->
+        <!-- Navigation Tabs -->
         <div class="flex border-b border-brand-border space-x-6">
             <button onclick="switchAdminTab('orders')" id="tab-btn-orders" class="pb-3 text-sm font-bold border-b-2 border-brand-yellow text-brand-yellow flex items-center transition">
                 <i class="fas fa-list-check mr-2"></i> Quản Lý Đơn Đặt Hàng
@@ -191,7 +161,7 @@
             </button>
         </div>
 
-        <!-- Tab 1: Orders Management -->
+        <!-- Tab 1: Orders -->
         <div id="admin-tab-orders" class="space-y-4">
             <div class="flex items-center justify-between">
                 <h3 class="text-lg font-bold text-white">Danh Sách Yêu Cầu Cần Xử Lý</h3>
@@ -224,7 +194,7 @@
             </div>
         </div>
 
-        <!-- Tab 2: Products Management -->
+        <!-- Tab 2: Products -->
         <div id="admin-tab-products" class="hidden space-y-6">
             <div class="flex items-center justify-between">
                 <h3 class="text-lg font-bold text-white">Danh Sách Sản Phẩm Dịch Vụ</h3>
@@ -233,11 +203,8 @@
                 </button>
             </div>
 
-            <div id="admin-products-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Rendered via JS -->
-            </div>
+            <div id="admin-products-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </div>
-
     </main>
 
     <!-- MODAL: ADD PRODUCT -->
@@ -285,18 +252,13 @@
                 </div>
 
                 <div class="pt-2 flex justify-end space-x-2">
-                    <button type="button" onclick="closeProductModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:bg-brand-dark">
-                        Hủy
-                    </button>
-                    <button type="submit" class="bg-brand-yellow hover:bg-brand-hover text-brand-dark font-extrabold text-xs px-5 py-2.5 rounded-xl shadow transition">
-                        Lưu Sản Phẩm
-                    </button>
+                    <button type="button" onclick="closeProductModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:bg-brand-dark">Hủy</button>
+                    <button type="submit" class="bg-brand-yellow hover:bg-brand-hover text-brand-dark font-extrabold text-xs px-5 py-2.5 rounded-xl shadow transition">Lưu Sản Phẩm</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="bg-brand-card border-t border-brand-border py-6 text-xs text-gray-400">
         <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
             <div>
@@ -309,16 +271,15 @@
         </div>
     </footer>
 
-    <!-- Toast Notification Container -->
     <div id="toast" class="fixed bottom-5 right-5 z-50 bg-brand-yellow text-brand-dark font-black px-4 py-3 rounded-xl shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 flex items-center space-x-2">
         <i class="fas fa-check-circle text-lg"></i>
         <span id="toast-msg">Thông báo</span>
     </div>
 
-    <!-- JS BACKEND INTEGRATION LOGIC -->
     <script>
-        const API_ADMIN = 'http://localhost:5000/api/admin';
-        const API_PUBLIC = 'http://localhost:5000/api';
+        const API_BASE = 'https://in-ban-me.onrender.com/api';
+        const API_ADMIN = `${API_BASE}/admin`;
+        const API_PUBLIC = API_BASE;
 
         let ordersData = [];
         let productsData = [];
@@ -327,23 +288,18 @@
             checkAuthStatus();
         });
 
-        // BẬT / TẮT ẨN HIỆN MẬT KHẨU
         function togglePasswordVisibility() {
             const passwordInput = document.getElementById('login-password');
             const icon = document.getElementById('toggle-password-icon');
-
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
             } else {
                 passwordInput.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         }
 
-        // XÁC THỰC VÀ ĐĂNG NHẬP (AUTHENTICATION)
         function checkAuthStatus() {
             const token = localStorage.getItem('adminToken');
             const overlay = document.getElementById('login-overlay');
@@ -384,7 +340,6 @@
             }
         }
 
-        // TAB SWITCHING
         function switchAdminTab(tab) {
             const tabOrders = document.getElementById('admin-tab-orders');
             const tabProducts = document.getElementById('admin-tab-products');
@@ -404,64 +359,53 @@
             }
         }
 
-      // HÀM XỬ LÝ KHI BẤM NÚT "LÀM MỚI DỮ LIỆU"
-async function handleRefreshData() {
-    try {
-        // 1. Gọi API Backend để lưu trữ các đơn COMPLETED vào bảng lưu trữ Database
-        const response = await fetch(`${API_ADMIN}/orders/archive-completed`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-        });
-        
-        const result = await response.json();
-        
-        if (result.success && result.archivedCount > 0) {
-            showToast(`Đã lưu trữ ${result.archivedCount} đơn hoàn thành vào Database!`);
-        } else {
-            showToast('Đã cập nhật dữ liệu mới nhất');
+        async function handleRefreshData() {
+            try {
+                const response = await fetch(`${API_ADMIN}/orders/archive-completed`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const result = await response.json();
+                
+                if (result.success && result.archivedCount > 0) {
+                    showToast(`Đã lưu trữ ${result.archivedCount} đơn hoàn thành!`);
+                } else {
+                    showToast('Đã cập nhật dữ liệu mới nhất');
+                }
+
+                await loadOrders();
+                await loadProducts();
+            } catch (err) {
+                showToast('Không thể kết nối đến máy chủ');
+            }
         }
 
-        // 2. Tải lại danh sách (Sau khi dọn dẹp trên Backend, các đơn COMPLETED sẽ biến mất)
-        await loadOrders();
-        await loadProducts();
-
-    } catch (err) {
-        console.error('Lỗi khi làm mới dữ liệu:', err);
-        showToast('Không thể kết nối đến máy chủ để lưu trữ');
-    }
-}
-
-        // FETCH ORDERS (Tải toàn bộ đơn hàng từ Database)
-async function loadOrders() {
-    try {
-        const res = await fetch(`${API_ADMIN}/orders`);
-        const result = await res.json();
-        
-        if (result.success) {
-            // Giữ nguyên tất cả các đơn hàng (bao gồm cả NEW, PROCESSING và COMPLETED)
-            ordersData = result.data || [];
-            renderOrders(ordersData);
-            updateStats();
+        async function loadOrders() {
+            try {
+                const res = await fetch(`${API_ADMIN}/orders`);
+                const result = await res.json();
+                
+                if (result.success) {
+                    ordersData = result.data || [];
+                    renderOrders(ordersData);
+                    updateStats();
+                }
+            } catch (err) {
+                document.getElementById('orders-table-body').innerHTML = `
+                    <tr>
+                        <td colspan="6" class="p-8 text-center text-red-400">
+                            <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+                            <p class="font-bold">Đang kết nối lại với máy chủ...</p>
+                        </td>
+                    </tr>
+                `;
+            }
         }
-    } catch (err) {
-        document.getElementById('orders-table-body').innerHTML = `
-            <tr>
-                <td colspan="6" class="p-8 text-center text-red-400">
-                    <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
-                    <p class="font-bold">Không thể kết nối đến Backend Server (http://localhost:5000)!</p>
-                </td>
-            </tr>
-        `;
-    }
-}
+
         function renderOrders(orders) {
             const tbody = document.getElementById('orders-table-body');
             if (orders.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="p-8 text-center text-gray-500">Không có đơn đặt in nào cần xử lý.</td>
-                    </tr>
-                `;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-500">Không có đơn đặt in nào cần xử lý.</td></tr>`;
                 return;
             }
 
@@ -470,7 +414,7 @@ async function loadOrders() {
                 if (ord.status === 'NEW') {
                     statusBadge = `<span class="bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/30 px-2.5 py-1 rounded-full text-[11px] font-bold">Mới tiếp nhận</span>`;
                 } else if (ord.status === 'PROCESSING') {
-                    statusBadge = `<span class="bg-orange-500/10 text-orange-400 border border-orange-500/30 px-2.5 py-1 rounded-full text-[11px] font-bold">Đang thiết kế/in</span>`;
+                    statusBadge = `<span class="bg-orange-500/10 text-orange-400 border border-orange-500/30 px-2.5 py-1 rounded-full text-[11px] font-bold">Đang in</span>`;
                 } else {
                     statusBadge = `<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-full text-[11px] font-bold">Hoàn thành</span>`;
                 }
@@ -479,7 +423,7 @@ async function loadOrders() {
 
                 return `
                     <tr class="hover:bg-brand-dark/50 transition">
-                        <td class="p-4 font-mono font-bold text-white text-xs">${orderId.substring(orderId.length - 6).toUpperCase()}</td>
+                        <td class="p-4 font-mono font-bold text-white text-xs">#${orderId.slice(-6).toUpperCase()}</td>
                         <td class="p-4">
                             <div class="font-bold text-white">${ord.fullname}</div>
                             <a href="https://zalo.me/${ord.phone}" target="_blank" class="text-xs text-brand-yellow hover:underline flex items-center mt-0.5">
@@ -541,7 +485,6 @@ async function loadOrders() {
             }
         }
 
-        // FETCH PRODUCTS
         async function loadProducts() {
             try {
                 const res = await fetch(`${API_PUBLIC}/products`);
@@ -565,11 +508,16 @@ async function loadOrders() {
 
             container.innerHTML = products.map(p => {
                 const prodId = p._id || p.id;
+                let imgPath = p.imageUrl || 'https://via.placeholder.com/300x200?text=In+Ban+Me';
+                if (imgPath.startsWith('/uploads')) {
+                    imgPath = `https://in-ban-me.onrender.com${imgPath}`;
+                }
+
                 return `
                     <div class="bg-brand-card border border-brand-border rounded-xl p-4 flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-brand-dark text-brand-yellow rounded-lg flex items-center justify-center text-lg shrink-0">
-                                <i class="${p.icon || 'fas fa-box'}"></i>
+                            <div class="w-10 h-10 bg-brand-dark text-brand-yellow rounded-lg flex items-center justify-center text-lg shrink-0 overflow-hidden">
+                                <img src="${imgPath}" alt="${p.title}" class="w-full h-full object-cover">
                             </div>
                             <div>
                                 <h4 class="font-bold text-sm text-white">${p.title}</h4>
@@ -584,17 +532,11 @@ async function loadOrders() {
             }).join('');
         }
 
-        function openProductModal() {
-            document.getElementById('product-modal').classList.remove('hidden');
-        }
-
-        function closeProductModal() {
-            document.getElementById('product-modal').classList.add('hidden');
-        }
+        function openProductModal() { document.getElementById('product-modal').classList.remove('hidden'); }
+        function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
 
         async function handleSaveProduct(e) {
             e.preventDefault();
-
             const imageFile = document.getElementById('prod-image').files[0];
             if (!imageFile) {
                 showToast('Vui lòng chọn hình ảnh sản phẩm!');
@@ -609,7 +551,7 @@ async function loadOrders() {
             formData.append('image', imageFile);
 
             try {
-                const res = await fetch(`${API_ADMIN}/orders`, {
+                const res = await fetch(`${API_ADMIN}/products`, {
                     method: 'POST',
                     body: formData
                 });
@@ -642,7 +584,6 @@ async function loadOrders() {
             }
         }
 
-        // STATS SUMMARY UPDATE
         function updateStats() {
             document.getElementById('stat-total-orders').innerText = ordersData.length;
             document.getElementById('stat-new-orders').innerText = ordersData.filter(o => o.status === 'NEW').length;
@@ -650,7 +591,6 @@ async function loadOrders() {
             document.getElementById('stat-total-products').innerText = productsData.length;
         }
 
-        // TOAST NOTIFICATION
         function showToast(msg) {
             const toast = document.getElementById('toast');
             document.getElementById('toast-msg').innerText = msg;
@@ -659,27 +599,6 @@ async function loadOrders() {
                 toast.classList.add('translate-y-20', 'opacity-0');
             }, 3000);
         }
-        async function loadAdminOrders() {
-    const response = await fetch('/api/admin/orders');
-    const orders = await response.json();
-
-    const tableBody = document.getElementById('orderTableBody');
-    tableBody.innerHTML = '';
-
-    orders.forEach(order => {
-        tableBody.innerHTML += `
-            <tr>
-                <td>${order.customerName}</td>
-                <td>${order.phone}</td>
-                <td>${order.note}</td>
-                <td>${order.status}</td>
-            </tr>
-        `;
-    });
-}
-
-// Tự động tải dữ liệu khi Admin mở trang
-loadAdminOrders();
     </script>
 </body>
 </html>

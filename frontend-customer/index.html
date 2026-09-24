@@ -33,9 +33,8 @@
                 </div>
             </a>
             <button type="button" onclick="sendDirectZalo()" class="w-full sm:w-auto bg-brand-yellow hover:bg-brand-hover text-brand-dark font-extrabold text-sm px-6 py-3.5 rounded-xl shadow-lg transition flex items-center justify-center">
-                            <i class="fas fa-comment mr-1.5"></i> Báo Giá Zalo Ngay
-                        </button>
-
+                <i class="fas fa-comment mr-1.5"></i> Báo Giá Zalo Ngay
+            </button>
         </div>
     </header>
 
@@ -79,7 +78,7 @@
                     </div>
                     <div>
                         <h4 class="font-bold text-xs text-white">Chất Liệu Đạt Chuẩn</h4>
-                        <p class="text-[11px] text-gray-400">Bền bỉ cùng thời gian – An toàn cùng sức khỏe.</p>
+                        <p class="text-[11px] text-gray-400">Bền bỉ - An toàn sức khỏe</p>
                     </div>
                 </div>
                 <div class="bg-brand-card border border-brand-border p-4 rounded-xl flex items-center space-x-3">
@@ -164,10 +163,9 @@
                     </div>
 
                     <div class="pt-2 flex flex-col sm:flex-row gap-3">
-                        <button type="submit" class="flex-1 bg-brand-yellow hover:bg-brand-hover text-brand-dark font-black py-3.5 rounded-xl shadow transition text-sm uppercase flex items-center justify-center">
+                        <button type="submit" id="submit-order-btn" class="flex-1 bg-brand-yellow hover:bg-brand-hover text-brand-dark font-black py-3.5 rounded-xl shadow transition text-sm uppercase flex items-center justify-center">
                             <i class="fas fa-paper-plane mr-2"></i> Gửi Yêu Cầu Ngay
                         </button>
-                        
                     </div>
                 </form>
             </div>
@@ -192,14 +190,10 @@
     <!-- Toast Notification UI -->
     <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- JS CONNECT TO BACKEND API -->
     <script>
-        const API_BASE = '[https://in-ban-me.onrender.com](https://in-ban-me.onrender.com)';
+        const API_BASE = 'https://in-ban-me.onrender.com/api';
         let products = [];
-        let selectedCategory = 'ALL';
 
-
-        // TỰ ĐỘNG LẤY SẢN PHẨM KHI TRANG MỞ XONG
         document.addEventListener('DOMContentLoaded', () => {
             loadProducts();
         });
@@ -217,54 +211,55 @@
                 document.getElementById('product-grid').innerHTML = `
                     <div class="col-span-full text-center py-8 text-red-400">
                         <i class="fas fa-exclamation-triangle text-xl mb-1"></i>
-                        <p class="font-bold text-sm">Không thể kết nối với Máy Chủ Backend ([https://in-ban-me.onrender.com](https://in-ban-me.onrender.com))!</p>
-                        <p class="text-xs text-gray-500 mt-1">Vui lòng kiểm tra file server.js đã được khởi chạy chưa.</p>
+                        <p class="font-bold text-sm">Máy chủ đang khởi động lại, vui lòng chờ trong giây lát...</p>
                     </div>
                 `;
+                // Tự động thử kết nối lại sau 5 giây nếu Render đang ngủ
+                setTimeout(loadProducts, 5000);
             }
         }
 
-        
-        // HIỂN THỊ DỮ LIỆU RA GIAO DIỆN KHI LƯU TỪ ADMIN
+        // HIỂN THỊ DỮ LIỆU SẢN PHẨM
         function renderProducts() {
-    const container = document.getElementById('product-grid');
-    
-    const filtered = selectedCategory === 'ALL' 
-        ? products 
-        : products.filter(p => p.category === selectedCategory);
+            const container = document.getElementById('product-grid');
 
-    if (filtered.length === 0) {
-        container.innerHTML = `<p class="col-span-full text-center text-gray-500 py-8">Chưa có sản phẩm nào trong danh mục này.</p>`;
-        return;
-    }
+            if (products.length === 0) {
+                container.innerHTML = `<p class="col-span-full text-center text-gray-500 py-8">Chưa có sản phẩm nào trong danh mục này.</p>`;
+                return;
+            }
 
-    container.innerHTML = filtered.map(p => `
-        <div class="bg-brand-card border border-brand-border rounded-2xl p-4 flex flex-col justify-between hover:border-brand-yellow/50 transition duration-300 group">
-            <div>
-                <!-- Hiển thị Hình ảnh sản phẩm -->
-                <div class="w-full h-48 bg-brand-dark rounded-xl overflow-hidden mb-4 relative">
-                    <img src="${p.imageUrl || 'https://via.placeholder.com/300x200?text=In+Ban+Me'}" 
-                         alt="${p.title}" 
-                         class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                    <span class="absolute top-2 right-2 text-[10px] bg-brand-dark/90 backdrop-blur border border-brand-border text-brand-yellow font-bold px-2.5 py-1 rounded-full uppercase">
-                        ${p.category || 'Dịch vụ'}
-                    </span>
-                </div>
+            container.innerHTML = products.map(p => {
+                let imgPath = p.imageUrl || 'https://via.placeholder.com/300x200?text=In+Ban+Me';
+                if (imgPath.startsWith('/uploads')) {
+                    imgPath = `https://in-ban-me.onrender.com${imgPath}`;
+                }
 
-                <h3 class="font-bold text-white text-base group-hover:text-brand-yellow transition">${p.title}</h3>
-                <p class="text-xs text-gray-400 mt-2 line-clamp-2">${p.desc || 'Chuyên nhận thiết kế & in ấn theo yêu cầu giá xưởng.'}</p>
-            </div>
-            <div class="mt-4 pt-3 border-t border-brand-border flex items-center justify-between">
-                <span class="text-xs text-brand-yellow font-bold">${p.priceNote || 'Giá ưu đãi'}</span>
-                <a href="#quick-quote" onclick="selectProductToQuote('${p.title}')" class="bg-brand-dark hover:bg-brand-yellow hover:text-brand-dark text-white border border-brand-border text-xs px-3 py-1.5 rounded-lg transition font-semibold">
-                    Đặt In
-                </a>
-            </div>
-        </div>
-    `).join('');
-}
+                return `
+                    <div class="bg-brand-card border border-brand-border rounded-2xl p-4 flex flex-col justify-between hover:border-brand-yellow/50 transition duration-300 group">
+                        <div>
+                            <div class="w-full h-48 bg-brand-dark rounded-xl overflow-hidden mb-4 relative">
+                                <img src="${imgPath}" 
+                                     alt="${p.title}" 
+                                     class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                <span class="absolute top-2 right-2 text-[10px] bg-brand-dark/90 backdrop-blur border border-brand-border text-brand-yellow font-bold px-2.5 py-1 rounded-full uppercase">
+                                    ${p.category || 'Dịch vụ'}
+                                </span>
+                            </div>
 
-        // TỰ ĐỘNG ĐIỀN TÊN SẢN PHẨM VÀO FORM KHI BẤM "ĐẶT IN"
+                            <h3 class="font-bold text-white text-base group-hover:text-brand-yellow transition">${p.title}</h3>
+                            <p class="text-xs text-gray-400 mt-2 line-clamp-2">${p.desc || 'Chuyên nhận thiết kế & in ấn theo yêu cầu giá xưởng.'}</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-brand-border flex items-center justify-between">
+                            <span class="text-xs text-brand-yellow font-bold">${p.priceNote || 'Giá ưu đãi'}</span>
+                            <a href="#quick-quote" onclick="selectProductToQuote('${p.title}')" class="bg-brand-dark hover:bg-brand-yellow hover:text-brand-dark text-white border border-brand-border text-xs px-3 py-1.5 rounded-lg transition font-semibold">
+                                Đặt In
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
         function selectProductToQuote(title) {
             const selectEl = document.getElementById('order-product');
             for (let i = 0; i < selectEl.options.length; i++) {
@@ -279,6 +274,12 @@
         // TẠO ĐƠN HÀNG MỚI
         async function handleOrderSubmit(e) {
             e.preventDefault();
+
+            const btn = document.getElementById('submit-order-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Đang gửi đơn...`;
+            btn.disabled = true;
+
             const payload = {
                 fullname: document.getElementById('order-fullname').value,
                 phone: document.getElementById('order-phone').value,
@@ -293,20 +294,25 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
+                
                 const data = await res.json();
                 
-                if (data.success) {
-                    showToast(`Gửi đơn thành công! Mã đơn: ${data.data.id || data.data._id}`, 'success');
+                if (res.ok && data.success) {
+                    const orderId = (data.data._id || data.data.id || '').slice(-6).toUpperCase();
+                    showToast(`Gửi đơn thành công! Mã đơn: #${orderId}`, 'success');
                     e.target.reset();
                 } else {
-                    showToast(data.message || 'Có lỗi xảy ra, vui lòng thử lại', 'error');
+                    showToast(data.message || 'Có lỗi xảy ra khi lưu đơn hàng', 'error');
                 }
             } catch (err) {
-                showToast('Không thể kết nối đến máy chủ!', 'error');
+                console.error("Lỗi gửi đơn:", err);
+                showToast('Không thể kết nối đến máy chủ! Vui lòng thử lại sau 30 giây.', 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
         }
 
-        // MỞ TRỰC TIẾP ZALO BÁO GIÁ
         function sendDirectZalo() {
             const phone = document.getElementById('order-phone').value || '';
             const product = document.getElementById('order-product').value || 'In ấn';
@@ -315,7 +321,6 @@
             window.open(`https://zalo.me/0377441499?text=${encodeURIComponent(message)}`, '_blank');
         }
 
-        // HIỂN THỊ TOAST THÔNG BÁO
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const isSuccess = type === 'success';
@@ -324,42 +329,16 @@
 
             const toast = document.createElement('div');
             toast.className = `${bgColor} text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform translate-y-[-10px] opacity-0 pointer-events-auto border border-white/20`;
-            toast.innerHTML = `
-                <i class="fas ${icon} text-lg"></i>
-                <span class="text-sm font-semibold">${message}</span>
-            `;
+            toast.innerHTML = `<i class="fas ${icon} text-lg"></i><span class="text-sm font-semibold">${message}</span>`;
 
             container.appendChild(toast);
 
-            setTimeout(() => {
-                toast.classList.remove('translate-y-[-10px]', 'opacity-0');
-            }, 10);
-
+            setTimeout(() => { toast.classList.remove('translate-y-[-10px]', 'opacity-0'); }, 10);
             setTimeout(() => {
                 toast.classList.add('translate-y-[-10px]', 'opacity-0');
                 setTimeout(() => toast.remove(), 400);
             }, 3500);
         }
-
-        async function submitOrder() {
-    const formData = {
-        customerName: document.getElementById('name').value,
-        phone: document.getElementById('phone').value,
-        note: document.getElementById('note').value
-    };
-
-    const response = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-    });
-
-    if (response.ok) {
-        alert("Gửi thông tin thành công!");
-    } else {
-        alert("Gửi thất bại, vui lòng thử lại.");
-    }
-}
     </script>
 </body>
 </html>
