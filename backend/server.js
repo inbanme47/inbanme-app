@@ -6,7 +6,8 @@ const multer = require('multer');
 const mongoose = require('mongoose');
 const app = express();
 const Order = require('./models');
-
+const customerPath = path.join(__dirname, '../frontend-customer');
+const adminPath = path.join(__dirname, '../frontend-admin'); // Thay 'frontend-admin' đúng với tên thư mục của bạn
 
 //  KẾT NỐI MONGODB ATLAS
 const MONGO_URI = process.env.MONGO_URI || "CHUỖI_KẾT_NỐI_MONGODB_CỦA_BẠN";
