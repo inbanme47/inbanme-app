@@ -3,7 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
-
+const mongoose = require('mongoose');
 const app = express();
 const PORT = 5000;
 
