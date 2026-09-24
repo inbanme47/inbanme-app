@@ -659,6 +659,27 @@ async function loadOrders() {
                 toast.classList.add('translate-y-20', 'opacity-0');
             }, 3000);
         }
+        async function loadAdminOrders() {
+    const response = await fetch('/api/admin/orders');
+    const orders = await response.json();
+
+    const tableBody = document.getElementById('orderTableBody');
+    tableBody.innerHTML = '';
+
+    orders.forEach(order => {
+        tableBody.innerHTML += `
+            <tr>
+                <td>${order.customerName}</td>
+                <td>${order.phone}</td>
+                <td>${order.note}</td>
+                <td>${order.status}</td>
+            </tr>
+        `;
+    });
+}
+
+// Tự động tải dữ liệu khi Admin mở trang
+loadAdminOrders();
     </script>
 </body>
 </html>

@@ -340,6 +340,26 @@
                 setTimeout(() => toast.remove(), 400);
             }, 3500);
         }
+
+        async function submitOrder() {
+    const formData = {
+        customerName: document.getElementById('name').value,
+        phone: document.getElementById('phone').value,
+        note: document.getElementById('note').value
+    };
+
+    const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+    });
+
+    if (response.ok) {
+        alert("Gửi thông tin thành công!");
+    } else {
+        alert("Gửi thất bại, vui lòng thử lại.");
+    }
+}
     </script>
 </body>
 </html>

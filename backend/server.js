@@ -5,8 +5,65 @@ const fs = require('fs');
 const multer = require('multer');
 const mongoose = require('mongoose');
 const app = express();
+const Order = require('./models/Order');
 const PORT = 5000;
 
+//  KẾT NỐI MONGODB ATLAS
+const MONGO_URI = process.env.MONGO_URI || "CHUỖI_KẾT_NỐI_MONGODB_CỦA_BẠN";
+mongoose.connect(MONGO_URI)
+    .then(() => console.log("Đã kết nối thành công tới MongoDB Atlas"))
+    .catch(err => console.error("Lỗi kết nối MongoDB:", err));
+
+// API 1: Người dùng gửi yêu cầu/đặt hàng (CUSTOMER)
+app.post('/api/orders', async (req, res) => {
+    try {
+        const newOrder = new Order(req.body);
+        await newOrder.save(); // Lưu vào MongoDB
+        res.status(201).json({ message: "Gửi yêu cầu thành công!", order: newOrder });
+    } catch (error) {
+        res.status(500).json({ error: "Lỗi lưu dữ liệu" });
+    }
+});
+
+// API 2: Admin lấy toàn bộ danh sách đơn hàng (ADMIN)
+app.get('/api/admin/orders', async (req, res) => {
+    try {
+        const orders = await Order.find().sort({ createdAt: -1 }); // Lấy dữ liệu từ MongoDB
+        res.json(orders);
+    } catch (error) {
+        res.status(500).json({ error: "Lỗi lấy dữ liệu" });
+    }
+});
+
+// CẤU HÌNH GIAO DIỆN STATIC FRONTEND
+const customerPath = path.join(__dirname, '../frontend-customer');
+const adminPath = path.join(__dirname, '../frontend-admin'); // Đường dẫn thư mục Admin của bạn
+
+app.use(express.static(customerPath));
+app.use('/admin', express.static(adminPath));
+
+app.get('/', (req, res) => res.sendFile(path.join(customerPath, 'index.html')));
+app.get('/admin', (req, res) => res.sendFile(path.join(adminPath, 'index.html')));
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// 1. Phục vụ giao diện Customer ở trang chủ '/'
+const customerPath = path.join(__dirname, '../frontend-customer');
+app.use(express.static(customerPath));
+
+// 2. Phục vụ giao diện Admin ở đường dẫn '/admin'
+const adminPath = path.join(__dirname, '../frontend-admin'); // Thư mục chứa code admin của bạn
+app.use('/admin', express.static(adminPath));
+
+// Trang chủ Customer
+app.get('/', (req, res) => {
+    res.sendFile(path.join(customerPath, 'index.html'));
+});
+
+// Trang Admin (Truy cập bằng: https://in-ban-me.onrender.com/admin)
+app.get('/admin/*', (req, res) => {
+    res.sendFile(path.join(adminPath, 'index.html'));
+});
 // Middleware
 app.use(cors());
 app.use(express.json());
