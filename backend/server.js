@@ -8,12 +8,15 @@ const { Order, Product } = require('./models');
 
 const app = express();
 
-// Enable CORS cho tất cả nguồn gốc
+// Enable CORS & Body Parser
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Cấu hình lưu trữ File Uploads
+// CẤU HÌNH PHỤC VỤ FILE TĨNH (HTML, CSS, JS, UPLOADS)
+app.use(express.static(path.join(__dirname)));
+
+// Cấu hình thư mục uploads
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
@@ -29,7 +32,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Serves static uploads folder
 app.use('/uploads', express.static(uploadDir));
 
 // KẾT NỐI MONGODB ATLAS
@@ -38,7 +40,21 @@ mongoose.connect(MONGO_URI)
     .then(() => console.log("✅ Kết nối thành công tới Database MongoDB"))
     .catch(err => console.error("❌ Lỗi kết nối MongoDB:", err));
 
-// Route kiểm tra trạng thái Server (Ping / Health check)
+// ==========================================
+// THÊM ROUTE HIỂN THỊ GIAO DIỆN (SỬA LỖI CANNOT GET /)
+// ==========================================
+
+// Trang chủ hiển thị index.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Trang quản trị hiển thị admin.html
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+// Ping check
 app.get('/api/ping', (req, res) => {
     res.json({ success: true, message: "Server is active" });
 });
@@ -47,7 +63,7 @@ app.get('/api/ping', (req, res) => {
 // 1. API CHO KHÁCH HÀNG (PUBLIC API)
 // ==========================================
 
-// Lấy danh sách sản phẩm hiển thị trên trang chủ
+// Lấy danh sách sản phẩm
 app.get('/api/products', async (req, res) => {
     try {
         const products = await Product.find().sort({ createdAt: -1 });
@@ -57,12 +73,10 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
-// Khách hàng gửi đơn/yêu cầu báo giá (Xử lý cả JSON lẫn File)
+// Khách hàng gửi đơn
 app.post('/api/orders', (req, res, next) => {
     upload.single('file')(req, res, (err) => {
-        if (err) {
-            console.error("Multer error:", err);
-        }
+        if (err) console.error("Multer error:", err);
         next();
     });
 }, async (req, res) => {
@@ -103,7 +117,6 @@ app.post('/api/orders', (req, res, next) => {
 // 2. API CHO QUẢN TRỊ VIÊN (ADMIN API)
 // ==========================================
 
-// Lấy toàn bộ danh sách đơn hàng
 app.get('/api/admin/orders', async (req, res) => {
     try {
         const orders = await Order.find().sort({ createdAt: -1 });
@@ -113,7 +126,6 @@ app.get('/api/admin/orders', async (req, res) => {
     }
 });
 
-// Cập nhật trạng thái đơn hàng (NEW -> PROCESSING -> COMPLETED)
 app.patch('/api/admin/orders/:id/status', async (req, res) => {
     try {
         const { status } = req.body;
@@ -124,7 +136,6 @@ app.patch('/api/admin/orders/:id/status', async (req, res) => {
     }
 });
 
-// Xóa đơn hàng
 app.delete('/api/admin/orders/:id', async (req, res) => {
     try {
         await Order.findByIdAndDelete(req.params.id);
@@ -134,7 +145,6 @@ app.delete('/api/admin/orders/:id', async (req, res) => {
     }
 });
 
-// Admin thêm sản phẩm dịch vụ mới (kèm ảnh)
 app.post('/api/admin/products', upload.single('image'), async (req, res) => {
     try {
         const { title, category, priceNote, desc } = req.body;
@@ -150,7 +160,6 @@ app.post('/api/admin/products', upload.single('image'), async (req, res) => {
     }
 });
 
-// Admin xóa sản phẩm
 app.delete('/api/admin/products/:id', async (req, res) => {
     try {
         await Product.findByIdAndDelete(req.params.id);
@@ -160,7 +169,6 @@ app.delete('/api/admin/products/:id', async (req, res) => {
     }
 });
 
-// Dọn dẹp đơn hàng hoàn thành
 app.post('/api/admin/orders/archive-completed', async (req, res) => {
     try {
         const result = await Order.deleteMany({ status: 'COMPLETED' });
