@@ -60,7 +60,7 @@ app.get('/', (req, res) => {
 });
 
 // Trang Admin (Truy cập bằng: https://in-ban-me.onrender.com/admin)
-app.get('/admin/*', (req, res) => {
+app.get('/admin/{*splat}, (req, res) => {
     res.sendFile(path.join(adminPath, 'index.html'));
 });
 // Middleware
