@@ -172,6 +172,37 @@
         </section>
     </main>
 
+    <!-- MODAL POPUP CHI TIẾT SẢN PHẨM -->
+    <div id="detail-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-brand-card border border-brand-border w-full max-w-lg rounded-2xl shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center border-b border-brand-border pb-3">
+                <h3 id="modal-title" class="text-lg font-bold text-white">Chi Tiết Sản Phẩm</h3>
+                <button onclick="closeDetailModal()" class="text-gray-400 hover:text-white text-lg">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="overflow-y-auto space-y-4 pr-1">
+                <div id="modal-slider-container" class="w-full h-56 bg-brand-dark rounded-xl overflow-hidden relative">
+                    <div id="modal-slider-track" class="flex w-full h-full transition-transform duration-500 ease-in-out"></div>
+                </div>
+                <div>
+                    <span id="modal-category" class="text-[10px] bg-brand-dark border border-brand-border text-brand-yellow font-bold px-2.5 py-1 rounded-full uppercase"></span>
+                    <p id="modal-price" class="text-brand-yellow font-bold text-sm mt-2"></p>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold uppercase text-gray-400 mb-1">Mô tả sản phẩm:</h4>
+                    <p id="modal-desc" class="text-sm text-gray-200 whitespace-pre-line leading-relaxed"></p>
+                </div>
+            </div>
+            <div class="pt-3 border-t border-brand-border flex justify-end gap-2">
+                <button onclick="closeDetailModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:bg-brand-dark">Đóng</button>
+                <button id="modal-quote-btn" class="bg-brand-yellow hover:bg-brand-hover text-brand-dark font-extrabold text-xs px-5 py-2.5 rounded-xl shadow transition">
+                    Đặt In Ngay
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-brand-card border-t border-brand-border py-8 text-xs text-gray-400">
         <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
@@ -193,6 +224,7 @@
     <script>
         const API_BASE = 'https://in-ban-me.onrender.com/api';
         let products = [];
+        let sliderIntervals = [];
 
         document.addEventListener('DOMContentLoaded', () => {
             loadProducts();
@@ -214,7 +246,6 @@
                         <p class="font-bold text-sm">Máy chủ đang khởi động lại, vui lòng chờ trong giây lát...</p>
                     </div>
                 `;
-                // Tự động thử kết nối lại sau 5 giây nếu Render đang ngủ
                 setTimeout(loadProducts, 5000);
             }
         }
@@ -223,32 +254,54 @@
         function renderProducts() {
             const container = document.getElementById('product-grid');
 
+            sliderIntervals.forEach(clearInterval);
+            sliderIntervals = [];
+
             if (products.length === 0) {
                 container.innerHTML = `<p class="col-span-full text-center text-gray-500 py-8">Chưa có sản phẩm nào trong danh mục này.</p>`;
                 return;
             }
 
-            container.innerHTML = products.map(p => {
-                let imgPath = p.imageUrl || 'https://via.placeholder.com/300x200?text=In+Ban+Me';
-                if (imgPath.startsWith('/uploads')) {
-                    imgPath = `https://in-ban-me.onrender.com${imgPath}`;
+            container.innerHTML = products.map((p, pIndex) => {
+                let imageList = p.images && p.images.length > 0 ? p.images : (p.imageUrl ? [p.imageUrl] : []);
+                if (imageList.length === 0) {
+                    imageList = ['https://via.placeholder.com/300x200?text=In+Ban+Me'];
                 }
+
+                const imagesHTML = imageList.map(img => {
+                    let imgPath = img.startsWith('/uploads') ? `https://in-ban-me.onrender.com${img}` : img;
+                    return `<img src="${imgPath}" alt="${p.title}" class="w-full h-48 object-cover flex-shrink-0">`;
+                }).join('');
+
+                const descText = p.desc || 'Chuyên nhận thiết kế & in ấn theo yêu cầu giá xưởng.';
+                const isLong = descText.length > 60; // Kiểm tra xem mô tả có dài hay không
 
                 return `
                     <div class="bg-brand-card border border-brand-border rounded-2xl p-4 flex flex-col justify-between hover:border-brand-yellow/50 transition duration-300 group">
                         <div>
-                            <div class="w-full h-48 bg-brand-dark rounded-xl overflow-hidden mb-4 relative">
-                                <img src="${imgPath}" 
-                                     alt="${p.title}" 
-                                     class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                                <span class="absolute top-2 right-2 text-[10px] bg-brand-dark/90 backdrop-blur border border-brand-border text-brand-yellow font-bold px-2.5 py-1 rounded-full uppercase">
+                            <!-- Khung chứa Slider trượt ảnh -->
+                            <div class="w-full h-48 bg-brand-dark rounded-xl overflow-hidden mb-4 relative cursor-pointer" onclick="openDetailModal(${pIndex})">
+                                <div id="slider-track-${pIndex}" class="flex w-full h-full transition-transform duration-500 ease-in-out">
+                                    ${imagesHTML}
+                                </div>
+                                <span class="absolute top-2 right-2 text-[10px] bg-brand-dark/90 backdrop-blur border border-brand-border text-brand-yellow font-bold px-2.5 py-1 rounded-full uppercase z-10">
                                     ${p.category || 'Dịch vụ'}
                                 </span>
                             </div>
 
-                            <h3 class="font-bold text-white text-base group-hover:text-brand-yellow transition">${p.title}</h3>
-                            <p class="text-xs text-gray-400 mt-2 line-clamp-2">${p.desc || 'Chuyên nhận thiết kế & in ấn theo yêu cầu giá xưởng.'}</p>
+                            <h3 class="font-bold text-white text-base group-hover:text-brand-yellow transition cursor-pointer" onclick="openDetailModal(${pIndex})">${p.title}</h3>
+                            
+                            <!-- Phần mô tả có nút Xem thêm -->
+                            <div class="mt-2 text-xs text-gray-400">
+                                <p id="desc-text-${pIndex}" class="line-clamp-2">${descText}</p>
+                                ${isLong ? `
+                                    <button id="toggle-btn-${pIndex}" onclick="toggleDesc(${pIndex})" class="text-brand-yellow hover:underline font-bold text-[11px] mt-1 inline-flex items-center">
+                                        <span>Xem thêm</span> <i class="fas fa-chevron-down text-[9px] ml-1"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
                         </div>
+
                         <div class="mt-4 pt-3 border-t border-brand-border flex items-center justify-between">
                             <span class="text-xs text-brand-yellow font-bold">${p.priceNote || 'Giá ưu đãi'}</span>
                             <a href="#quick-quote" onclick="selectProductToQuote('${p.title}')" class="bg-brand-dark hover:bg-brand-yellow hover:text-brand-dark text-white border border-brand-border text-xs px-3 py-1.5 rounded-lg transition font-semibold">
@@ -258,6 +311,72 @@
                     </div>
                 `;
             }).join('');
+
+            startAutoSliders();
+        }
+
+        // BẬT / TẮT XEM THÊM NỔI TẠI THẺ
+        function toggleDesc(index) {
+            const textEl = document.getElementById(`desc-text-${index}`);
+            const btnEl = document.getElementById(`toggle-btn-${index}`);
+
+            if (textEl.classList.contains('line-clamp-2')) {
+                textEl.classList.remove('line-clamp-2');
+                btnEl.innerHTML = `<span>Thu gọn</span> <i class="fas fa-chevron-up text-[9px] ml-1"></i>`;
+            } else {
+                textEl.classList.add('line-clamp-2');
+                btnEl.innerHTML = `<span>Xem thêm</span> <i class="fas fa-chevron-down text-[9px] ml-1"></i>`;
+            }
+        }
+
+        // MỞ MODAL XEM CHI TIẾT HOÀN CHỈNH
+        function openDetailModal(index) {
+            const p = products[index];
+            if (!p) return;
+
+            document.getElementById('modal-title').innerText = p.title;
+            document.getElementById('modal-category').innerText = p.category || 'Dịch vụ';
+            document.getElementById('modal-price').innerText = p.priceNote || 'Giá ưu đãi';
+            document.getElementById('modal-desc').innerText = p.desc || 'Chuyên nhận thiết kế & in ấn theo yêu cầu giá xưởng.';
+
+            let imageList = p.images && p.images.length > 0 ? p.images : (p.imageUrl ? [p.imageUrl] : []);
+            if (imageList.length === 0) imageList = ['https://via.placeholder.com/300x200?text=In+Ban+Me'];
+
+            const modalTrack = document.getElementById('modal-slider-track');
+            modalTrack.innerHTML = imageList.map(img => {
+                let imgPath = img.startsWith('/uploads') ? `https://in-ban-me.onrender.com${img}` : img;
+                return `<img src="${imgPath}" alt="${p.title}" class="w-full h-56 object-cover flex-shrink-0">`;
+            }).join('');
+
+            document.getElementById('modal-quote-btn').onclick = function() {
+                closeDetailModal();
+                selectProductToQuote(p.title);
+                location.href = '#quick-quote';
+            };
+
+            document.getElementById('detail-modal').classList.remove('hidden');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detail-modal').classList.add('hidden');
+        }
+
+        function startAutoSliders() {
+            products.forEach((p, pIndex) => {
+                const track = document.getElementById(`slider-track-${pIndex}`);
+                if (!track) return;
+
+                const totalImages = track.children.length;
+                if (totalImages <= 1) return;
+
+                let currentIndex = 0;
+                const interval = setInterval(() => {
+                    currentIndex = (currentIndex + 1) % totalImages;
+                    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                }, 3000);
+
+                sliderIntervals.push(interval);
+            });
         }
 
         function selectProductToQuote(title) {

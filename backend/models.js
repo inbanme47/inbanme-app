@@ -8,17 +8,16 @@ const orderSchema = new mongoose.Schema({
     quantity: { type: String, required: true },
     note: { type: String, default: '' },
     fileUrl: { type: String, default: '' },
-    // Đã thêm trạng thái 'ARCHIVED' để phục vụ lưu trữ vĩnh viễn
     status: { type: String, enum: ['NEW', 'PROCESSING', 'COMPLETED', 'ARCHIVED'], default: 'NEW' }
 }, { timestamps: true });
 
-// Schema Sản Phẩm Dịch Vụ
+// Schema Sản Phẩm Dịch Vụ (Đã cập nhật mảng images chứa nhiều hình ảnh)
 const productSchema = new mongoose.Schema({
     title: { type: String, required: true },
     category: { type: String, required: true },
     priceNote: { type: String, required: true },
     desc: { type: String, default: '' },
-    imageUrl: { type: String, default: '' },
+    images: { type: [String], default: [] },
     icon: { type: String, default: 'fas fa-box' }
 }, { timestamps: true });
 

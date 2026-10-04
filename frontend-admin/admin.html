@@ -242,8 +242,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Hình ảnh sản phẩm *</label>
-                    <input type="file" id="prod-image" accept="image/*" required class="w-full bg-brand-dark border border-brand-border text-white text-xs rounded-xl px-3.5 py-2 text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brand-yellow file:text-brand-dark hover:file:bg-brand-hover focus:outline-none">
+                    <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Hình ảnh sản phẩm (chọn 1 hoặc nhiều) *</label>
+                    <input type="file" id="prod-image" accept="image/*" multiple required class="w-full bg-brand-dark border border-brand-border text-white text-xs rounded-xl px-3.5 py-2 text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brand-yellow file:text-brand-dark hover:file:bg-brand-hover focus:outline-none">
                 </div>
 
                 <div>
@@ -508,16 +508,16 @@
 
             container.innerHTML = products.map(p => {
                 const prodId = p._id || p.id;
-                let imgPath = p.imageUrl || 'https://via.placeholder.com/300x200?text=In+Ban+Me';
-                if (imgPath.startsWith('/uploads')) {
-                    imgPath = `https://in-ban-me.onrender.com${imgPath}`;
+                let firstImg = (p.images && p.images.length > 0) ? p.images[0] : (p.imageUrl || 'https://via.placeholder.com/300x200?text=In+Ban+Me');
+                if (firstImg.startsWith('/uploads')) {
+                    firstImg = `https://in-ban-me.onrender.com${firstImg}`;
                 }
 
                 return `
                     <div class="bg-brand-card border border-brand-border rounded-xl p-4 flex items-center justify-between">
                         <div class="flex items-center space-x-3">
                             <div class="w-10 h-10 bg-brand-dark text-brand-yellow rounded-lg flex items-center justify-center text-lg shrink-0 overflow-hidden">
-                                <img src="${imgPath}" alt="${p.title}" class="w-full h-full object-cover">
+                                <img src="${firstImg}" alt="${p.title}" class="w-full h-full object-cover">
                             </div>
                             <div>
                                 <h4 class="font-bold text-sm text-white">${p.title}</h4>
@@ -537,9 +537,9 @@
 
         async function handleSaveProduct(e) {
             e.preventDefault();
-            const imageFile = document.getElementById('prod-image').files[0];
-            if (!imageFile) {
-                showToast('Vui lòng chọn hình ảnh sản phẩm!');
+            const imageFiles = document.getElementById('prod-image').files;
+            if (!imageFiles || imageFiles.length === 0) {
+                showToast('Vui lòng chọn ít nhất một hình ảnh sản phẩm!');
                 return;
             }
 
@@ -548,7 +548,11 @@
             formData.append('category', document.getElementById('prod-category').value);
             formData.append('priceNote', document.getElementById('prod-price').value);
             formData.append('desc', document.getElementById('prod-desc').value);
-            formData.append('image', imageFile);
+
+            // Đính kèm danh sách nhiều ảnh
+            for (let i = 0; i < imageFiles.length; i++) {
+                formData.append('images', imageFiles[i]);
+            }
 
             try {
                 const res = await fetch(`${API_ADMIN}/products`, {

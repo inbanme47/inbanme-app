@@ -120,7 +120,6 @@ app.post('/api/orders', (req, res, next) => {
 // 2. API CHO QUẢN TRỊ VIÊN (ADMIN API)
 // ==========================================
 
-// Lấy danh sách đơn hàng active (Loại bỏ các đơn đã ARCHIVED)
 app.get('/api/admin/orders', async (req, res) => {
     try {
         const orders = await Order.find({ status: { $ne: 'ARCHIVED' } }).sort({ createdAt: -1 });
@@ -149,12 +148,19 @@ app.delete('/api/admin/orders/:id', async (req, res) => {
     }
 });
 
-app.post('/api/admin/products', upload.single('image'), async (req, res) => {
+// Đã cập nhật cho phép tải tối đa 5 ảnh một lúc cho sản phẩm
+app.post('/api/admin/products', upload.array('images', 5), async (req, res) => {
     try {
         const { title, category, priceNote, desc } = req.body;
-        const imageUrl = req.file ? `/uploads/${req.file.filename}` : 'https://via.placeholder.com/300x200?text=In+Ban+Me';
         
-        const newProduct = new Product({ title, category, priceNote, desc, imageUrl });
+        let images = [];
+        if (req.files && req.files.length > 0) {
+            images = req.files.map(f => `/uploads/${f.filename}`);
+        } else {
+            images = ['https://via.placeholder.com/300x200?text=In+Ban+Me'];
+        }
+        
+        const newProduct = new Product({ title, category, priceNote, desc, images });
         await newProduct.save();
         
         res.status(201).json({ success: true, data: newProduct });
@@ -173,7 +179,6 @@ app.delete('/api/admin/products/:id', async (req, res) => {
     }
 });
 
-// Chuyển tất cả các đơn COMPLETED thành ARCHIVED thay vì xóa hẳn khỏi database
 app.post('/api/admin/orders/archive-completed', async (req, res) => {
     try {
         const result = await Order.updateMany(
