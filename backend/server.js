@@ -1,12 +1,14 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { Product, Order } = require('./models');
 
 const app = express();
 
-// Bật CORS cho phép kết nối từ mọi nguồn
+// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -16,100 +18,133 @@ const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
-
-// Cấu hình lưu trữ file upload bằng Multer
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname);
-        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
-    }
-});
-const upload = multer({ storage: storage });
-
-// Cho phép truy cập công khai thư mục /uploads để xem ảnh
 app.use('/uploads', express.static(uploadDir));
 
-// Dữ liệu tạm trong bộ nhớ (hoặc kết nối MongoDB của bạn)
-let productsList = [
+// Cấu hình Multer nhận file upload
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, 'uploads/'),
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'img-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+const upload = multer({ storage });
+
+// Kết nối MongoDB (Thay URI MongoDB của bạn nếu có)
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/inbanme';
+mongoose.connect(MONGO_URI)
+    .then(() => console.log('✅ Đã kết nối Database MongoDB thành công'))
+    .catch(err => console.log('⚠️ Chưa kết nối MongoDB (Đang chạy chế độ Memory tạm thời):', err.message));
+
+// Dữ liệu bộ nhớ tạm khi chưa có DB
+let memoryProducts = [
     {
         _id: "1",
         title: "In NameCard / Danh thiếp theo yêu cầu",
         category: "In Namecard",
         priceNote: "69.000đ/hộp",
         desc: "Giấy Couche 300gsm dày dặn, Cán màng mờ/bóng 2 mặt chống nước nhẹ, tùy chọn bo góc hoặc vuông cạnh theo yêu cầu.",
-        images: ["https://via.placeholder.com/300x200?text=Namecard"]
+        images: ["https://via.placeholder.com/300x200?text=NameCard"]
     }
 ];
+let memoryOrders = [];
 
-let ordersList = [];
+// ================= API SẢN PHẨM ================= //
 
-// API: Lấy danh sách sản phẩm
-app.get('/api/products', (req, res) => {
-    res.json({ success: true, data: productsList });
-});
-
-// API: Thêm sản phẩm mới (Hỗ trợ upload ảnh file)
-app.post('/api/products', upload.single('image'), (req, res) => {
+// Lấy danh sách sản phẩm
+app.get('/api/products', async (req, res) => {
     try {
-        const { title, category, priceNote, desc, description, price } = req.body;
-        
-        // Tạo đường dẫn ảnh nếu có file upload
-        let imageUrl = '';
-        if (req.file) {
-            imageUrl = `/uploads/${req.file.filename}`;
+        if (mongoose.connection.readyState === 1) {
+            const products = await Product.find().sort({ createdAt: -1 });
+            return res.json({ success: true, data: products });
         }
-
-        const newProduct = {
-            _id: Date.now().toString(),
-            title: title || 'Sản phẩm mới',
-            category: category || 'Khác',
-            priceNote: priceNote || price || 'Báo giá Zalo',
-            desc: desc || description || '',
-            images: imageUrl ? [imageUrl] : ['https://via.placeholder.com/300x200?text=No+Image']
-        };
-
-        productsList.unshift(newProduct);
-        console.log("Đã thêm sản phẩm thành công:", newProduct);
-
-        return res.json({
-            success: true,
-            message: "Thêm sản phẩm thành công!",
-            data: newProduct
-        });
-    } catch (error) {
-        console.error("Lỗi khi thêm sản phẩm:", error);
-        return res.status(500).json({ success: false, message: "Lỗi máy chủ khi lưu sản phẩm" });
-    }
-});
-
-// API: Xóa sản phẩm
-app.delete('/api/products/:id', (req, res) => {
-    const { id } = req.params;
-    productsList = productsList.filter(p => p._id !== id);
-    res.json({ success: true, message: "Đã xóa sản phẩm thành công!" });
-});
-
-// API: Đặt hàng
-app.post('/api/orders', (req, res) => {
-    try {
-        const orderData = req.body;
-        orderData._id = Date.now().toString();
-        orderData.createdAt = new Date();
-        ordersList.unshift(orderData);
-        res.json({ success: true, message: "Đặt hàng thành công!", data: orderData });
+        res.json({ success: true, data: memoryProducts });
     } catch (err) {
-        res.status(500).json({ success: false, message: "Không thể tạo đơn hàng" });
+        res.status(500).json({ success: false, message: 'Lỗi tải sản phẩm' });
     }
 });
 
-// API: Lấy danh sách đơn hàng cho admin
-app.get('/api/orders', (req, res) => {
-    res.json({ success: true, data: ordersList });
+// Thêm sản phẩm mới (Nhận File ảnh từ Form Admin)
+app.post('/api/products', upload.single('image'), async (req, res) => {
+    try {
+        const { title, category, priceNote, desc } = req.body;
+        let imagePath = req.file ? `/uploads/${req.file.filename}` : 'https://via.placeholder.com/300x200?text=InBanMe';
+
+        if (mongoose.connection.readyState === 1) {
+            const newProduct = new Product({
+                title,
+                category,
+                priceNote,
+                desc,
+                images: [imagePath]
+            });
+            await newProduct.save();
+            return res.json({ success: true, message: 'Thêm sản phẩm thành công', data: newProduct });
+        } else {
+            const newProduct = {
+                _id: Date.now().toString(),
+                title,
+                category,
+                priceNote,
+                desc,
+                images: [imagePath]
+            };
+            memoryProducts.unshift(newProduct);
+            return res.json({ success: true, message: 'Thêm sản phẩm thành công', data: newProduct });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Không thể lưu sản phẩm' });
+    }
+});
+
+// Xóa sản phẩm
+app.delete('/api/products/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (mongoose.connection.readyState === 1) {
+            await Product.findByIdAndDelete(id);
+        } else {
+            memoryProducts = memoryProducts.filter(p => p._id !== id);
+        }
+        res.json({ success: true, message: 'Đã xóa sản phẩm' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Không thể xóa sản phẩm' });
+    }
+});
+
+// ================= API ĐƠN HÀNG ================= //
+
+// Lấy danh sách đơn hàng
+app.get('/api/orders', async (req, res) => {
+    try {
+        if (mongoose.connection.readyState === 1) {
+            const orders = await Order.find().sort({ createdAt: -1 });
+            return res.json({ success: true, data: orders });
+        }
+        res.json({ success: true, data: memoryOrders });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Lỗi tải đơn hàng' });
+    }
+});
+
+// Tạo đơn hàng mới
+app.post('/api/orders', async (req, res) => {
+    try {
+        const { fullname, phone, product, quantity, note } = req.body;
+        if (mongoose.connection.readyState === 1) {
+            const newOrder = new Order({ fullname, phone, product, quantity, note });
+            await newOrder.save();
+            return res.json({ success: true, message: 'Tạo đơn thành công', data: newOrder });
+        } else {
+            const newOrder = { _id: Date.now().toString(), fullname, phone, product, quantity, note, createdAt: new Date() };
+            memoryOrders.unshift(newOrder);
+            return res.json({ success: true, message: 'Tạo đơn thành công', data: newOrder });
+        }
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Không thể gửi đơn' });
+    }
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server đang chạy tại Port: ${PORT}`));

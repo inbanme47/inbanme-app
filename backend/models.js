@@ -1,27 +1,25 @@
 const mongoose = require('mongoose');
 
-// Schema Đơn Hàng
+// Schema Sản phẩm / Dịch vụ
+const productSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    category: { type: String, required: true },
+    priceNote: { type: String, required: true },
+    desc: { type: String, required: true },
+    images: [{ type: String }]
+}, { timestamps: true });
+
+// Schema Đơn hàng / Yêu cầu báo giá
 const orderSchema = new mongoose.Schema({
     fullname: { type: String, required: true },
     phone: { type: String, required: true },
     product: { type: String, required: true },
     quantity: { type: String, required: true },
     note: { type: String, default: '' },
-    fileUrl: { type: String, default: '' },
-    status: { type: String, enum: ['NEW', 'PROCESSING', 'COMPLETED', 'ARCHIVED'], default: 'NEW' }
+    status: { type: String, default: 'Chờ xử lý' }
 }, { timestamps: true });
 
-// Schema Sản Phẩm Dịch Vụ (Đã cập nhật mảng images chứa nhiều hình ảnh)
-const productSchema = new mongoose.Schema({
-    title: { type: String, required: true },
-    category: { type: String, required: true },
-    priceNote: { type: String, required: true },
-    desc: { type: String, default: '' },
-    images: { type: [String], default: [] },
-    icon: { type: String, default: 'fas fa-box' }
-}, { timestamps: true });
-
-const Order = mongoose.model('Order', orderSchema);
 const Product = mongoose.model('Product', productSchema);
+const Order = mongoose.model('Order', orderSchema);
 
-module.exports = { Order, Product };
+module.exports = { Product, Order };

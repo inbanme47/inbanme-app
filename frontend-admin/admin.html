@@ -124,8 +124,8 @@
                                 <img src="${img}" class="w-16 h-16 object-cover rounded-lg border border-brand-border shrink-0">
                                 <div class="flex-1 min-w-0">
                                     <h4 class="font-bold text-white text-sm truncate">${p.title}</h4>
-                                    <p class="text-xs text-brand-yellow font-semibold mt-0.5">${p.priceNote || p.price || ''}</p>
-                                    <p class="text-[11px] text-gray-400 truncate mt-1">${p.desc || p.description || ''}</p>
+                                    <p class="text-xs text-brand-yellow font-semibold mt-0.5">${p.priceNote || ''}</p>
+                                    <p class="text-[11px] text-gray-400 truncate mt-1">${p.desc || ''}</p>
                                 </div>
                                 <button onclick="deleteProduct('${p._id}')" class="text-red-400 hover:text-red-300 p-2 text-sm">
                                     <i class="fas fa-trash"></i>
@@ -137,11 +137,11 @@
                     container.innerHTML = `<p class="col-span-full text-center text-gray-500 py-8">Chưa có sản phẩm nào.</p>`;
                 }
             } catch (err) {
-                showToast('Không thể tải danh sách sản phẩm', 'error');
+                showToast('Không thể kết nối máy chủ', 'error');
             }
         }
 
-        // THÊM SẢN PHẨM MỚI (Xử lý Multipart Form gửi kèm File)
+        // THÊM SẢN PHẨM MỚI (Dùng FormData hỗ trợ File Upload)
         async function handleAddProduct(e) {
             e.preventDefault();
 
@@ -164,7 +164,7 @@
             try {
                 const res = await fetch(`${API_BASE}/products`, {
                     method: 'POST',
-                    body: formData // Gửi FormData trực tiếp để hỗ trợ Upload ảnh
+                    body: formData
                 });
 
                 const data = await res.json();
@@ -179,7 +179,7 @@
                 }
             } catch (err) {
                 console.error(err);
-                showToast('Lỗi kết nối máy chủ! Vui lòng thử lại sau giây lát.', 'error');
+                showToast('Không thể kết nối máy chủ!', 'error');
             } finally {
                 btn.innerText = originalText;
                 btn.disabled = false;
@@ -196,7 +196,7 @@
                     loadAdminProducts();
                 }
             } catch (err) {
-                showToast('Không thể xóa sản phẩm', 'error');
+                showToast('Lỗi xóa sản phẩm', 'error');
             }
         }
 
@@ -210,14 +210,9 @@
 
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
-            const isSuccess = type === 'success';
-            const bgColor = isSuccess ? 'bg-emerald-600' : 'bg-red-600';
-            const icon = isSuccess ? 'fa-check-circle' : 'fa-exclamation-circle';
-
             const toast = document.createElement('div');
-            toast.className = `${bgColor} text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-2 pointer-events-auto text-sm font-semibold transition-all`;
-            toast.innerHTML = `<i class="fas ${icon}"></i><span>${message}</span>`;
-
+            toast.className = `${type === 'success' ? 'bg-emerald-600' : 'bg-red-600'} text-white px-5 py-3 rounded-xl shadow-2xl text-sm font-semibold transition-all pointer-events-auto`;
+            toast.innerHTML = message;
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 3500);
         }
