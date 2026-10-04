@@ -13,14 +13,29 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Tạo thư mục uploads nếu chưa có
+// Cấu hình phục vụ file tĩnh (HTML, CSS, JS, Uploads)
+app.use(express.static(__dirname)); // Phục vụ index.html, admin.html ở thư mục gốc
+
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
 app.use('/uploads', express.static(uploadDir));
 
-// Cấu hình Multer nhận file upload
+// ================= ROUTE GIAO DIỆN (FIX LỖI CANNOT GET /) ================= //
+
+// Trang chủ dành cho khách hàng
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Trang quản trị dành cho admin
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+// ================= CẤU HÌNH MULTER UPLOAD ================= //
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, 'uploads/'),
     filename: (req, file, cb) => {
@@ -30,13 +45,13 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Kết nối MongoDB (Thay URI MongoDB của bạn nếu có)
+// ================= KẾT NỐI DATABASE ================= //
+
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/inbanme';
 mongoose.connect(MONGO_URI)
     .then(() => console.log('✅ Đã kết nối Database MongoDB thành công'))
     .catch(err => console.log('⚠️ Chưa kết nối MongoDB (Đang chạy chế độ Memory tạm thời):', err.message));
 
-// Dữ liệu bộ nhớ tạm khi chưa có DB
 let memoryProducts = [
     {
         _id: "1",
@@ -64,7 +79,7 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
-// Thêm sản phẩm mới (Nhận File ảnh từ Form Admin)
+// Thêm sản phẩm mới (Có upload ảnh)
 app.post('/api/products', upload.single('image'), async (req, res) => {
     try {
         const { title, category, priceNote, desc } = req.body;
@@ -115,7 +130,6 @@ app.delete('/api/products/:id', async (req, res) => {
 
 // ================= API ĐƠN HÀNG ================= //
 
-// Lấy danh sách đơn hàng
 app.get('/api/orders', async (req, res) => {
     try {
         if (mongoose.connection.readyState === 1) {
@@ -128,7 +142,6 @@ app.get('/api/orders', async (req, res) => {
     }
 });
 
-// Tạo đơn hàng mới
 app.post('/api/orders', async (req, res) => {
     try {
         const { fullname, phone, product, quantity, note } = req.body;
