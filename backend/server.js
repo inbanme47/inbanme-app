@@ -8,20 +8,17 @@ const { Order, Product } = require('./models');
 
 const app = express();
 
-// Enable CORS & Body Parser
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// CẤU HÌNH ĐƯỜNG DẪN THEO ĐÚNG CẤU TRÚC THƯ MỤC CỦA BẠN
 const customerDir = path.join(__dirname, '..', 'frontend-customer');
 const adminDir = path.join(__dirname, '..', 'frontend-admin');
 
-// Serve file tĩnh cho cả 2 thư mục frontend
 app.use(express.static(customerDir));
 app.use(express.static(adminDir));
 
-// Cấu hình thư mục uploads nằm ở backend/uploads
+// Thư mục lưu tệp tải lên
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
@@ -32,42 +29,41 @@ const storage = multer.diskStorage({
         cb(null, uploadDir);
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const ext = path.extname(file.originalname) || '.jpg';
+        cb(null, 'prod-' + uniqueSuffix + ext);
     }
 });
-const upload = multer({ storage });
+
+const upload = multer({ 
+    storage: storage,
+    limits: { 
+        fileSize: 10 * 1024 * 1024,
+        files: 20
+    }
+});
 
 app.use('/uploads', express.static(uploadDir));
 
-// KẾT NỐI MONGODB ATLAS
 const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/inbanme";
 mongoose.connect(MONGO_URI)
     .then(() => console.log("✅ Kết nối thành công tới Database MongoDB"))
     .catch(err => console.error("❌ Lỗi kết nối MongoDB:", err));
 
-// ==========================================
-// ROUTE TRẢ VỀ GIAO DIỆN WEB
-// ==========================================
-
-// Trang chủ trả về index.html từ frontend-customer
+// GIAO DIỆN
 app.get('/', (req, res) => {
     res.sendFile(path.join(customerDir, 'index.html'));
 });
 
-// Trang Admin trả về admin.html từ frontend-admin
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(adminDir, 'admin.html'));
 });
 
-// Ping check
 app.get('/api/ping', (req, res) => {
     res.json({ success: true, message: "Server is active" });
 });
 
-// ==========================================
-// 1. API CHO KHÁCH HÀNG (PUBLIC API)
-// ==========================================
-
+// API PUBLIC
 app.get('/api/products', async (req, res) => {
     try {
         const products = await Product.find().sort({ createdAt: -1 });
@@ -116,10 +112,7 @@ app.post('/api/orders', (req, res, next) => {
     }
 });
 
-// ==========================================
-// 2. API CHO QUẢN TRỊ VIÊN (ADMIN API)
-// ==========================================
-
+// API ADMIN - ĐƠN HÀNG
 app.get('/api/admin/orders', async (req, res) => {
     try {
         const orders = await Order.find({ status: { $ne: 'ARCHIVED' } }).sort({ createdAt: -1 });
@@ -148,28 +141,110 @@ app.delete('/api/admin/orders/:id', async (req, res) => {
     }
 });
 
-// Đã cập nhật cho phép tải tối đa 5 ảnh một lúc cho sản phẩm
-app.post('/api/admin/products', upload.array('images', 5), async (req, res) => {
-    try {
-        const { title, category, priceNote, desc } = req.body;
-        
-        let images = [];
-        if (req.files && req.files.length > 0) {
-            images = req.files.map(f => `/uploads/${f.filename}`);
-        } else {
-            images = ['https://via.placeholder.com/300x200?text=In+Ban+Me'];
+// API ADMIN - SẢN PHẨM
+// 1. Thêm mới
+app.post('/api/admin/products', (req, res) => {
+    upload.array('images', 20)(req, res, async (err) => {
+        if (err) {
+            console.error("Lỗi Upload Multer:", err);
+            return res.status(400).json({ 
+                success: false, 
+                message: "Lỗi tải ảnh: " + (err.message || "Xảy ra lỗi khi nhận tệp") 
+            });
         }
-        
-        const newProduct = new Product({ title, category, priceNote, desc, images });
-        await newProduct.save();
-        
-        res.status(201).json({ success: true, data: newProduct });
-    } catch (error) {
-        console.error("Lỗi thêm sản phẩm:", error);
-        res.status(500).json({ success: false, message: "Lỗi hệ thống khi thêm sản phẩm" });
-    }
+
+        try {
+            const { title, category, priceNote, desc } = req.body;
+            
+            let images = [];
+            if (req.files && req.files.length > 0) {
+                images = req.files.map(f => `/uploads/${f.filename}`);
+            } else {
+                images = ['https://via.placeholder.com/300x200?text=In+Ban+Me'];
+            }
+            
+            const newProduct = new Product({ title, category, priceNote, desc, images });
+            await newProduct.save();
+            
+            return res.status(201).json({ success: true, data: newProduct });
+        } catch (error) {
+            console.error("Lỗi lưu cơ sở dữ liệu:", error);
+            return res.status(500).json({ 
+                success: false, 
+                message: "Lỗi lưu sản phẩm vào database: " + error.message 
+            });
+        }
+    });
 });
 
+// 2. Cập nhật/Sửa sản phẩm
+app.post('/api/admin/products/:id/update', (req, res) => {
+    upload.array('images', 20)(req, res, async (err) => {
+        if (err) {
+            console.error("Lỗi Upload Multer:", err);
+            return res.status(400).json({ 
+                success: false, 
+                message: "Lỗi tải ảnh: " + (err.message || "Xảy ra lỗi khi nhận tệp") 
+            });
+        }
+
+        try {
+            const productId = req.params.id;
+            if (!productId || productId === 'undefined') {
+                return res.status(400).json({ success: false, message: "ID sản phẩm không hợp lệ!" });
+            }
+
+            const { title, category, priceNote, desc, existingImages } = req.body;
+            const product = await Product.findById(productId);
+            
+            if (!product) {
+                return res.status(404).json({ success: false, message: "Không tìm thấy sản phẩm!" });
+            }
+
+            let finalImages = [];
+            if (existingImages) {
+                try {
+                    finalImages = typeof existingImages === 'string' ? JSON.parse(existingImages) : existingImages;
+                } catch (e) {
+                    finalImages = product.images || [];
+                }
+            } else {
+                finalImages = product.images || [];
+            }
+
+            if (req.files && req.files.length > 0) {
+                const newUploadedImages = req.files.map(f => `/uploads/${f.filename}`);
+                finalImages = finalImages.concat(newUploadedImages);
+            }
+
+            const updatedProduct = await Product.findByIdAndUpdate(
+                productId, 
+                { 
+                    title, 
+                    category, 
+                    priceNote, 
+                    desc: desc || '', 
+                    images: finalImages 
+                }, 
+                { new: true }
+            );
+
+            return res.json({ 
+                success: true, 
+                data: updatedProduct, 
+                message: "Cập nhật sản phẩm thành công!" 
+            });
+        } catch (error) {
+            console.error("Lỗi cập nhật sản phẩm:", error);
+            return res.status(500).json({ 
+                success: false, 
+                message: "Lỗi cập nhật sản phẩm: " + error.message 
+            });
+        }
+    });
+});
+
+// 3. Xóa sản phẩm
 app.delete('/api/admin/products/:id', async (req, res) => {
     try {
         await Product.findByIdAndDelete(req.params.id);
@@ -192,7 +267,6 @@ app.post('/api/admin/orders/archive-completed', async (req, res) => {
     }
 });
 
-// Khởi chạy Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`🚀 Server đang chạy tại cổng ${PORT}`);

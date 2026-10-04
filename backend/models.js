@@ -11,7 +11,7 @@ const orderSchema = new mongoose.Schema({
     status: { type: String, enum: ['NEW', 'PROCESSING', 'COMPLETED', 'ARCHIVED'], default: 'NEW' }
 }, { timestamps: true });
 
-// Schema Sản Phẩm Dịch Vụ (Đã cập nhật mảng images chứa nhiều hình ảnh)
+// Schema Sản Phẩm Dịch Vụ
 const productSchema = new mongoose.Schema({
     title: { type: String, required: true },
     category: { type: String, required: true },
