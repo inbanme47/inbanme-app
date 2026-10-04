@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BẢNG ĐIỀU KHIỂN - IN BAN MÊ</title>
+    <title>Trang Quản Trị Viên - IN BAN MÊ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -19,202 +19,589 @@
             }
         }
     </script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #121212; }
+        ::-webkit-scrollbar-thumb { background: #2E2E2E; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #FACC15; }
+    </style>
 </head>
-<body class="bg-brand-dark text-gray-200 font-sans min-h-screen p-4 sm:p-8">
+<body class="bg-brand-dark text-gray-200 font-sans antialiased min-h-screen flex flex-col justify-between">
 
-    <div class="max-w-7xl mx-auto space-y-8">
-        <!-- Header Admin -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-brand-border">
-            <div>
-                <span class="text-xs font-bold text-brand-yellow uppercase tracking-widest">HỆ THỐNG QUẢN TRỊ</span>
-                <h1 class="text-2xl font-black text-white uppercase mt-1">BẢNG ĐIỀU KHIỂN XƯỞNG IN BAN MÊ</h1>
-            </div>
-            <button onclick="openModal()" class="bg-brand-yellow hover:bg-brand-hover text-brand-dark font-extrabold text-sm px-5 py-3 rounded-xl shadow-lg transition flex items-center">
-                <i class="fas fa-plus mr-2"></i> Thêm Sản Phẩm Mới
-            </button>
-        </div>
-
-        <!-- Danh Sách Sản Phẩm -->
-        <div class="bg-brand-card border border-brand-border rounded-2xl p-6">
-            <h2 class="text-lg font-bold text-white mb-4">Danh Sách Sản Phẩm Dịch Vụ</h2>
-            <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div class="col-span-full text-center py-8 text-gray-500">
-                    <i class="fas fa-spinner fa-spin text-2xl text-brand-yellow mb-2"></i>
-                    <p>Đang tải danh sách sản phẩm...</p>
+    <!-- MÀN HÌNH ĐĂNG NHẬP -->
+    <div id="login-overlay" class="fixed inset-0 z-50 bg-brand-dark flex items-center justify-center p-4">
+        <div class="bg-brand-card border border-brand-border w-full max-w-md rounded-2xl shadow-2xl p-8 space-y-6">
+            <div class="text-center space-y-2">
+                <div class="w-16 h-16 bg-brand-yellow text-brand-dark font-black rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-xl">
+                    B
                 </div>
+                <h2 class="text-2xl font-black text-white tracking-tight mt-3">ĐĂNG NHẬP QUẢN TRỊ</h2>
+                <p class="text-xs text-gray-400">Vui lòng đăng nhập tài khoản Admin để truy cập hệ thống xưởng IN BAN MÊ</p>
             </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div id="login-error" class="hidden bg-red-500/10 border border-red-500/30 text-red-400 text-xs p-3 rounded-xl text-center font-semibold">
+                    Tên đăng nhập hoặc mật khẩu không chính xác!
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-300 mb-1.5">Tài khoản Admin</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-500">
+                            <i class="fas fa-user"></i>
+                        </span>
+                        <input type="text" id="login-username" required placeholder="Nhập tên đăng nhập" class="w-full bg-brand-dark border border-brand-border text-white text-sm rounded-xl pl-10 pr-3.5 py-3 focus:outline-none focus:border-brand-yellow transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-300 mb-1.5">Mật khẩu</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-500">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        <input type="password" id="login-password" required placeholder="Nhập mật khẩu" class="w-full bg-brand-dark border border-brand-border text-white text-sm rounded-xl pl-10 pr-10 py-3 focus:outline-none focus:border-brand-yellow transition">
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-400 hover:text-brand-yellow transition">
+                            <i id="toggle-password-icon" class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-brand-yellow hover:bg-brand-hover text-brand-dark font-black py-3 rounded-xl transition shadow-lg text-sm uppercase tracking-wider mt-2">
+                    <i class="fas fa-right-to-bracket mr-2"></i> Đăng Nhập
+                </button>
+            </form>
         </div>
     </div>
 
-    <!-- MODAL THÊM SẢN PHẨM -->
+    <!-- Header Admin -->
+    <header class="sticky top-0 z-40 bg-brand-dark/95 backdrop-blur border-b border-brand-border">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-brand-yellow text-brand-dark font-black rounded-xl flex items-center justify-center text-xl shadow-lg">
+                    B
+                </div>
+                <div>
+                    <span class="block text-lg font-black text-white leading-none">IN BAN MÊ</span>
+                    <span class="block text-[10px] font-bold text-brand-yellow uppercase mt-0.5">BẢNG ĐIỀU KHIỂN</span>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <button onclick="handleRefreshData()" class="bg-brand-yellow hover:bg-brand-hover text-brand-dark font-extrabold text-xs px-3.5 py-2 rounded-xl transition flex items-center shadow">
+                    <i class="fas fa-rotate mr-1.5"></i> Lưu Trữ & Làm Mới
+                </button>
+                <button onclick="handleLogout()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 font-extrabold text-xs px-3.5 py-2 rounded-xl transition flex items-center">
+                    <i class="fas fa-sign-out-alt mr-1.5"></i> Đăng Xuất
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl mx-auto w-full px-4 py-8 space-y-8">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-brand-border pb-5 gap-4">
+            <div>
+                <span class="text-xs font-bold text-brand-yellow uppercase tracking-widest">HỆ THỐNG QUẢN TRỊ VIÊN</span>
+                <h1 class="text-2xl font-black text-white mt-1">BẢNG ĐIỀU KHIỂN XƯỞNG IN BAN MÊ</h1>
+            </div>
+        </div>
+
+        <!-- Dashboard Stats -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-brand-card border border-brand-border p-5 rounded-2xl flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-gray-400 uppercase">Tổng Đơn Hiện Tại</p>
+                    <p id="stat-total-orders" class="text-2xl font-black text-white mt-1">0</p>
+                </div>
+                <div class="w-12 h-12 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center text-xl">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+            </div>
+
+            <div class="bg-brand-card border border-brand-border p-5 rounded-2xl flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-gray-400 uppercase">Đơn Mới Cần Báo Giá</p>
+                    <p id="stat-new-orders" class="text-2xl font-black text-brand-yellow mt-1">0</p>
+                </div>
+                <div class="w-12 h-12 bg-brand-yellow/10 text-brand-yellow rounded-xl flex items-center justify-center text-xl">
+                    <i class="fas fa-bell"></i>
+                </div>
+            </div>
+
+            <div class="bg-brand-card border border-brand-border p-5 rounded-2xl flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-gray-400 uppercase">Đang In / Xử Lý</p>
+                    <p id="stat-processing-orders" class="text-2xl font-black text-orange-400 mt-1">0</p>
+                </div>
+                <div class="w-12 h-12 bg-orange-500/10 text-orange-400 rounded-xl flex items-center justify-center text-xl">
+                    <i class="fas fa-print"></i>
+                </div>
+            </div>
+
+            <div class="bg-brand-card border border-brand-border p-5 rounded-2xl flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-gray-400 uppercase">Sản Phẩm Dịch Vụ</p>
+                    <p id="stat-total-products" class="text-2xl font-black text-emerald-400 mt-1">0</p>
+                </div>
+                <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-xl">
+                    <i class="fas fa-boxes-stacked"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-brand-border space-x-6">
+            <button onclick="switchAdminTab('orders')" id="tab-btn-orders" class="pb-3 text-sm font-bold border-b-2 border-brand-yellow text-brand-yellow flex items-center transition">
+                <i class="fas fa-list-check mr-2"></i> Quản Lý Đơn Đặt Hàng
+            </button>
+            <button onclick="switchAdminTab('products')" id="tab-btn-products" class="pb-3 text-sm font-bold border-b-2 border-transparent text-gray-400 hover:text-white flex items-center transition">
+                <i class="fas fa-box mr-2"></i> Quản Lý Danh Mục Sản Phẩm
+            </button>
+        </div>
+
+        <!-- Tab 1: Orders -->
+        <div id="admin-tab-orders" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold text-white">Danh Sách Yêu Cầu Cần Xử Lý</h3>
+                <span class="text-xs text-gray-400">Tự động đồng bộ mỗi 5 giây</span>
+            </div>
+
+            <div class="bg-brand-card border border-brand-border rounded-2xl overflow-hidden shadow-xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-300">
+                        <thead class="bg-brand-dark text-xs uppercase text-gray-400 font-bold border-b border-brand-border">
+                            <tr>
+                                <th class="p-4">Mã Đơn</th>
+                                <th class="p-4">Khách Hàng</th>
+                                <th class="p-4">Sản Phẩm & SL</th>
+                                <th class="p-4">Ghi Chú</th>
+                                <th class="p-4">Trạng Thái</th>
+                                <th class="p-4 text-center">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body" class="divide-y divide-brand-border">
+                            <tr>
+                                <td colspan="6" class="p-8 text-center text-gray-500">
+                                    <i class="fas fa-spinner fa-spin text-2xl mb-2 text-brand-yellow"></i>
+                                    <p>Đang tải danh sách đơn hàng từ Backend...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Products -->
+        <div id="admin-tab-products" class="hidden space-y-6">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold text-white">Danh Sách Sản Phẩm Dịch Vụ</h3>
+                <button onclick="openProductModal()" class="bg-brand-yellow hover:bg-brand-hover text-brand-dark font-extrabold text-xs px-4 py-2.5 rounded-xl transition flex items-center shadow">
+                    <i class="fas fa-plus mr-1.5"></i> Thêm Sản Phẩm Mới
+                </button>
+            </div>
+
+            <div id="admin-products-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+    </main>
+
+    <!-- MODAL: ADD PRODUCT -->
     <div id="product-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-        <div class="bg-brand-card border border-brand-border w-full max-w-md rounded-2xl shadow-2xl p-6 relative">
-            <div class="flex justify-between items-center mb-6">
+        <div class="bg-brand-card border border-brand-border w-full max-w-md rounded-2xl shadow-2xl p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-brand-border pb-3">
                 <h3 class="text-lg font-bold text-white">Thêm Sản Phẩm Dịch Vụ</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-white text-lg">
+                <button onclick="closeProductModal()" class="text-gray-400 hover:text-white">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
 
-            <form id="product-form" onsubmit="handleAddProduct(event)" class="space-y-4">
+            <form onsubmit="handleSaveProduct(event)" class="space-y-3">
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Tên sản phẩm *</label>
-                    <input type="text" id="p-title" required placeholder="In NameCard / Danh thiếp theo yêu cầu" class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-brand-yellow">
+                    <input type="text" id="prod-title" required placeholder="VD: In Ly Cà Phê PET 500ml" class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-brand-yellow">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Danh mục *</label>
-                        <select id="p-category" required class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-brand-yellow">
-                            <option value="In Namecard">In Namecard</option>
+                        <select id="prod-category" required class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-brand-yellow">
                             <option value="In Ly Nhựa">In Ly Nhựa</option>
-                            <option value="In Bao Bì">In Bao Bì</option>
-                            <option value="In Tem Nhãn">In Tem Nhãn</option>
-                            <option value="Dịch vụ khác">Dịch vụ khác</option>
+                            <option value="In Namecard">In Namecard</option>
+                            <option value="Bao Bì & Túi">Bao Bì & Túi</option>
+                            <option value="Tem Nhãn">Tem Nhãn / Thiệp</option>
+                            <option value="Khác">Khác</option>
                         </select>
                     </div>
+
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Ghi chú giá *</label>
-                        <input type="text" id="p-price" required placeholder="69.000đ/hộp" class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-brand-yellow">
+                        <input type="text" id="prod-price" required placeholder="VD: Giá từ 500đ / ly" class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-brand-yellow">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Hình ảnh sản phẩm *</label>
-                    <input type="file" id="p-image" accept="image/*" class="w-full bg-brand-dark border border-brand-border text-gray-300 text-xs rounded-xl p-2 focus:outline-none file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brand-yellow file:text-brand-dark hover:file:bg-brand-hover">
+                    <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Hình ảnh sản phẩm (chọn 1 hoặc nhiều) *</label>
+                    <input type="file" id="prod-image" accept="image/*" multiple required class="w-full bg-brand-dark border border-brand-border text-white text-xs rounded-xl px-3.5 py-2 text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brand-yellow file:text-brand-dark hover:file:bg-brand-hover focus:outline-none">
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Mô tả chi tiết *</label>
-                    <textarea id="p-desc" rows="3" required placeholder="Nhập chi tiết về quy cách in, chất liệu..." class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-brand-yellow"></textarea>
+                    <textarea id="prod-desc" rows="2" required placeholder="Mô tả quy cách, chất liệu, tính năng..." class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-brand-yellow"></textarea>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-3">
-                    <button type="button" onclick="closeModal()" class="px-5 py-2.5 rounded-xl text-xs font-bold text-gray-400 hover:bg-brand-dark">Hủy</button>
-                    <button type="submit" id="save-btn" class="bg-brand-yellow hover:bg-brand-hover text-brand-dark font-extrabold text-xs px-6 py-2.5 rounded-xl shadow transition">
-                        Lưu Sản Phẩm
-                    </button>
+                <div class="pt-2 flex justify-end space-x-2">
+                    <button type="button" onclick="closeProductModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:bg-brand-dark">Hủy</button>
+                    <button type="submit" class="bg-brand-yellow hover:bg-brand-hover text-brand-dark font-extrabold text-xs px-5 py-2.5 rounded-xl shadow transition">Lưu Sản Phẩm</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    <footer class="bg-brand-card border-t border-brand-border py-6 text-xs text-gray-400">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+            <div>
+                <p class="font-bold text-white text-sm">IN BAN MÊ - QUẢN TRỊ VIÊN XƯỞNG IN</p>
+                <p class="mt-0.5">📍 Địa chỉ: Đường 10/3, Phường Buôn Ma Thuột, Tỉnh Đắk Lắk</p>
+            </div>
+            <div class="text-gray-500 text-[11px]">
+                <p>© 2026 IN BAN MÊ Admin System.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-brand-yellow text-brand-dark font-black px-4 py-3 rounded-xl shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 flex items-center space-x-2">
+        <i class="fas fa-check-circle text-lg"></i>
+        <span id="toast-msg">Thông báo</span>
+    </div>
 
     <script>
         const API_BASE = 'https://in-ban-me.onrender.com/api';
+        const API_ADMIN = `${API_BASE}/admin`;
+        const API_PUBLIC = API_BASE;
 
-        document.addEventListener('DOMContentLoaded', loadAdminProducts);
+        let ordersData = [];
+        let productsData = [];
 
-        async function loadAdminProducts() {
-            try {
-                const res = await fetch(`${API_BASE}/products`);
-                const data = await res.json();
+        window.addEventListener('DOMContentLoaded', () => {
+            checkAuthStatus();
+        });
 
-                const container = document.getElementById('product-list');
-                if (data.success && data.data.length > 0) {
-                    container.innerHTML = data.data.map(p => {
-                        let img = p.images && p.images.length > 0 ? p.images[0] : (p.imageUrl || '');
-                        if (img.startsWith('/uploads')) img = `https://in-ban-me.onrender.com${img}`;
-                        if (!img) img = 'https://via.placeholder.com/300x200?text=No+Image';
-
-                        return `
-                            <div class="bg-brand-dark border border-brand-border rounded-xl p-4 flex gap-4 items-center justify-between">
-                                <img src="${img}" class="w-16 h-16 object-cover rounded-lg border border-brand-border shrink-0">
-                                <div class="flex-1 min-w-0">
-                                    <h4 class="font-bold text-white text-sm truncate">${p.title}</h4>
-                                    <p class="text-xs text-brand-yellow font-semibold mt-0.5">${p.priceNote || ''}</p>
-                                    <p class="text-[11px] text-gray-400 truncate mt-1">${p.desc || ''}</p>
-                                </div>
-                                <button onclick="deleteProduct('${p._id}')" class="text-red-400 hover:text-red-300 p-2 text-sm">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        `;
-                    }).join('');
-                } else {
-                    container.innerHTML = `<p class="col-span-full text-center text-gray-500 py-8">Chưa có sản phẩm nào.</p>`;
-                }
-            } catch (err) {
-                showToast('Không thể kết nối máy chủ', 'error');
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('login-password');
+            const icon = document.getElementById('toggle-password-icon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         }
 
-        // THÊM SẢN PHẨM MỚI (Dùng FormData hỗ trợ File Upload)
-        async function handleAddProduct(e) {
-            e.preventDefault();
+        function checkAuthStatus() {
+            const token = localStorage.getItem('adminToken');
+            const overlay = document.getElementById('login-overlay');
 
-            const btn = document.getElementById('save-btn');
-            const originalText = btn.innerText;
-            btn.innerText = 'Đang lưu...';
-            btn.disabled = true;
+            if (token === 'authenticated_token_inbanme') {
+                overlay.classList.add('hidden');
+                loadOrders();
+                loadProducts();
+                if (!window.orderInterval) {
+                    window.orderInterval = setInterval(loadOrders, 5000);
+                }
+            } else {
+                overlay.classList.remove('hidden');
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('login-username').value;
+            const pass = document.getElementById('login-password').value;
+            const errorMsg = document.getElementById('login-error');
+
+            if (user === 'admin' && pass === '123456') {
+                localStorage.setItem('adminToken', 'authenticated_token_inbanme');
+                errorMsg.classList.add('hidden');
+                showToast('Đăng nhập thành công!');
+                checkAuthStatus();
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('Bạn có muốn đăng xuất khỏi tài khoản Admin?')) {
+                localStorage.removeItem('adminToken');
+                if (window.orderInterval) clearInterval(window.orderInterval);
+                location.reload();
+            }
+        }
+
+        function switchAdminTab(tab) {
+            const tabOrders = document.getElementById('admin-tab-orders');
+            const tabProducts = document.getElementById('admin-tab-products');
+            const btnOrders = document.getElementById('tab-btn-orders');
+            const btnProducts = document.getElementById('tab-btn-products');
+
+            if (tab === 'orders') {
+                tabOrders.classList.remove('hidden');
+                tabProducts.classList.add('hidden');
+                btnOrders.className = "pb-3 text-sm font-bold border-b-2 border-brand-yellow text-brand-yellow flex items-center transition";
+                btnProducts.className = "pb-3 text-sm font-bold border-b-2 border-transparent text-gray-400 hover:text-white flex items-center transition";
+            } else {
+                tabOrders.classList.add('hidden');
+                tabProducts.classList.remove('hidden');
+                btnProducts.className = "pb-3 text-sm font-bold border-b-2 border-brand-yellow text-brand-yellow flex items-center transition";
+                btnOrders.className = "pb-3 text-sm font-bold border-b-2 border-transparent text-gray-400 hover:text-white flex items-center transition";
+            }
+        }
+
+        async function handleRefreshData() {
+            try {
+                const response = await fetch(`${API_ADMIN}/orders/archive-completed`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const result = await response.json();
+                
+                if (result.success && result.archivedCount > 0) {
+                    showToast(`Đã lưu trữ thành công ${result.archivedCount} đơn hoàn thành vào Database!`);
+                } else {
+                    showToast('Đã cập nhật dữ liệu mới nhất');
+                }
+
+                await loadOrders();
+                await loadProducts();
+            } catch (err) {
+                showToast('Không thể kết nối đến máy chủ');
+            }
+        }
+
+        async function loadOrders() {
+            try {
+                const res = await fetch(`${API_ADMIN}/orders`);
+                const result = await res.json();
+                
+                if (result.success) {
+                    ordersData = result.data || [];
+                    renderOrders(ordersData);
+                    updateStats();
+                }
+            } catch (err) {
+                document.getElementById('orders-table-body').innerHTML = `
+                    <tr>
+                        <td colspan="6" class="p-8 text-center text-red-400">
+                            <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+                            <p class="font-bold">Đang kết nối lại với máy chủ...</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function renderOrders(orders) {
+            const tbody = document.getElementById('orders-table-body');
+            if (orders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-500">Không có đơn đặt in nào cần xử lý.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = orders.map(ord => {
+                let statusBadge = '';
+                if (ord.status === 'NEW') {
+                    statusBadge = `<span class="bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/30 px-2.5 py-1 rounded-full text-[11px] font-bold">Mới tiếp nhận</span>`;
+                } else if (ord.status === 'PROCESSING') {
+                    statusBadge = `<span class="bg-orange-500/10 text-orange-400 border border-orange-500/30 px-2.5 py-1 rounded-full text-[11px] font-bold">Đang in</span>`;
+                } else {
+                    statusBadge = `<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-full text-[11px] font-bold">Hoàn thành</span>`;
+                }
+
+                const orderId = ord._id || ord.id || 'N/A';
+
+                return `
+                    <tr class="hover:bg-brand-dark/50 transition">
+                        <td class="p-4 font-mono font-bold text-white text-xs">#${orderId.slice(-6).toUpperCase()}</td>
+                        <td class="p-4">
+                            <div class="font-bold text-white">${ord.fullname}</div>
+                            <a href="https://zalo.me/${ord.phone}" target="_blank" class="text-xs text-brand-yellow hover:underline flex items-center mt-0.5">
+                                <i class="fab fa-whatsapp mr-1"></i> ${ord.phone}
+                            </a>
+                        </td>
+                        <td class="p-4">
+                            <div class="font-semibold text-white text-xs">${ord.product}</div>
+                            <div class="text-xs text-gray-400">SL: ${ord.quantity}</div>
+                        </td>
+                        <td class="p-4 text-xs text-gray-400 max-w-xs truncate">${ord.note || '-'}</td>
+                        <td class="p-4">${statusBadge}</td>
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center space-x-2">
+                                <select onchange="updateOrderStatus('${orderId}', this.value)" class="bg-brand-dark border border-brand-border text-xs rounded-lg px-2 py-1 text-gray-300 focus:outline-none">
+                                    <option value="NEW" ${ord.status === 'NEW' ? 'selected' : ''}>Mới</option>
+                                    <option value="PROCESSING" ${ord.status === 'PROCESSING' ? 'selected' : ''}>Đang in</option>
+                                    <option value="COMPLETED" ${ord.status === 'COMPLETED' ? 'selected' : ''}>Hoàn thành</option>
+                                </select>
+                                <button onclick="deleteOrder('${orderId}')" class="text-gray-500 hover:text-red-400 p-1.5 transition">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function updateOrderStatus(id, newStatus) {
+            try {
+                const res = await fetch(`${API_ADMIN}/orders/${id}/status`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToast('Đã cập nhật trạng thái đơn hàng');
+                    loadOrders();
+                }
+            } catch (err) {
+                showToast('Lỗi khi cập nhật trạng thái');
+            }
+        }
+
+        async function deleteOrder(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa đơn hàng này?')) {
+                try {
+                    const res = await fetch(`${API_ADMIN}/orders/${id}`, { method: 'DELETE' });
+                    const result = await res.json();
+                    if (result.success) {
+                        showToast('Đã xóa đơn hàng');
+                        loadOrders();
+                    }
+                } catch (err) {
+                    showToast('Lỗi khi xóa đơn hàng');
+                }
+            }
+        }
+
+        async function loadProducts() {
+            try {
+                const res = await fetch(`${API_PUBLIC}/products`);
+                const result = await res.json();
+                if (result.success) {
+                    productsData = result.data || [];
+                    renderProducts(productsData);
+                    updateStats();
+                }
+            } catch (err) {
+                console.error('Không thể tải sản phẩm:', err);
+            }
+        }
+
+        function renderProducts(products) {
+            const container = document.getElementById('admin-products-list');
+            if (products.length === 0) {
+                container.innerHTML = `<p class="col-span-full text-center text-gray-500 py-8">Chưa có sản phẩm dịch vụ nào.</p>`;
+                return;
+            }
+
+            container.innerHTML = products.map(p => {
+                const prodId = p._id || p.id;
+                let firstImg = (p.images && p.images.length > 0) ? p.images[0] : (p.imageUrl || 'https://via.placeholder.com/300x200?text=In+Ban+Me');
+                if (firstImg.startsWith('/uploads')) {
+                    firstImg = `https://in-ban-me.onrender.com${firstImg}`;
+                }
+
+                return `
+                    <div class="bg-brand-card border border-brand-border rounded-xl p-4 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-brand-dark text-brand-yellow rounded-lg flex items-center justify-center text-lg shrink-0 overflow-hidden">
+                                <img src="${firstImg}" alt="${p.title}" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-white">${p.title}</h4>
+                                <p class="text-xs text-brand-yellow font-semibold mt-0.5">${p.priceNote}</p>
+                            </div>
+                        </div>
+                        <button onclick="deleteProduct('${prodId}')" class="text-gray-500 hover:text-red-400 p-2 transition">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openProductModal() { document.getElementById('product-modal').classList.remove('hidden'); }
+        function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
+
+        async function handleSaveProduct(e) {
+            e.preventDefault();
+            const imageFiles = document.getElementById('prod-image').files;
+            if (!imageFiles || imageFiles.length === 0) {
+                showToast('Vui lòng chọn ít nhất một hình ảnh sản phẩm!');
+                return;
+            }
 
             const formData = new FormData();
-            formData.append('title', document.getElementById('p-title').value);
-            formData.append('category', document.getElementById('p-category').value);
-            formData.append('priceNote', document.getElementById('p-price').value);
-            formData.append('desc', document.getElementById('p-desc').value);
+            formData.append('title', document.getElementById('prod-title').value);
+            formData.append('category', document.getElementById('prod-category').value);
+            formData.append('priceNote', document.getElementById('prod-price').value);
+            formData.append('desc', document.getElementById('prod-desc').value);
 
-            const fileInput = document.getElementById('p-image');
-            if (fileInput.files.length > 0) {
-                formData.append('image', fileInput.files[0]);
+            // Đính kèm danh sách nhiều ảnh
+            for (let i = 0; i < imageFiles.length; i++) {
+                formData.append('images', imageFiles[i]);
             }
 
             try {
-                const res = await fetch(`${API_BASE}/products`, {
+                const res = await fetch(`${API_ADMIN}/products`, {
                     method: 'POST',
                     body: formData
                 });
-
-                const data = await res.json();
-
-                if (res.ok && data.success) {
-                    showToast('Thêm sản phẩm thành công!', 'success');
-                    closeModal();
-                    document.getElementById('product-form').reset();
-                    loadAdminProducts();
+                const result = await res.json();
+                if (result.success) {
+                    showToast('Đã thêm sản phẩm thành công!');
+                    closeProductModal();
+                    e.target.reset();
+                    loadProducts();
                 } else {
-                    showToast(data.message || 'Lỗi thêm sản phẩm', 'error');
+                    showToast(result.message || 'Lỗi thêm sản phẩm');
                 }
             } catch (err) {
-                console.error(err);
-                showToast('Không thể kết nối máy chủ!', 'error');
-            } finally {
-                btn.innerText = originalText;
-                btn.disabled = false;
+                showToast('Không thể kết nối máy chủ');
             }
         }
 
         async function deleteProduct(id) {
-            if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
-            try {
-                const res = await fetch(`${API_BASE}/products/${id}`, { method: 'DELETE' });
-                const data = await res.json();
-                if (data.success) {
-                    showToast('Đã xóa sản phẩm', 'success');
-                    loadAdminProducts();
+            if (confirm('Xóa sản phẩm này khỏi hệ thống?')) {
+                try {
+                    const res = await fetch(`${API_ADMIN}/products/${id}`, { method: 'DELETE' });
+                    const result = await res.json();
+                    if (result.success) {
+                        showToast('Đã xóa sản phẩm');
+                        loadProducts();
+                    }
+                } catch (err) {
+                    showToast('Lỗi khi xóa sản phẩm');
                 }
-            } catch (err) {
-                showToast('Lỗi xóa sản phẩm', 'error');
             }
         }
 
-        function openModal() {
-            document.getElementById('product-modal').classList.remove('hidden');
+        function updateStats() {
+            document.getElementById('stat-total-orders').innerText = ordersData.length;
+            document.getElementById('stat-new-orders').innerText = ordersData.filter(o => o.status === 'NEW').length;
+            document.getElementById('stat-processing-orders').innerText = ordersData.filter(o => o.status === 'PROCESSING').length;
+            document.getElementById('stat-total-products').innerText = productsData.length;
         }
 
-        function closeModal() {
-            document.getElementById('product-modal').classList.add('hidden');
-        }
-
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `${type === 'success' ? 'bg-emerald-600' : 'bg-red-600'} text-white px-5 py-3 rounded-xl shadow-2xl text-sm font-semibold transition-all pointer-events-auto`;
-            toast.innerHTML = message;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3500);
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
         }
     </script>
 </body>

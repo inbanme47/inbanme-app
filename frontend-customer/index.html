@@ -60,11 +60,54 @@
             </div>
         </section>
 
-        <!-- Product Section -->
+        <!-- Features Banner -->
+        <section class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-brand-card border border-brand-border p-4 rounded-xl flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-brand-yellow/10 text-brand-yellow rounded-lg flex items-center justify-center text-lg shrink-0">
+                        <i class="fas fa-pencil-ruler"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs text-white">Miễn Phí Thiết Kế</h4>
+                        <p class="text-[11px] text-gray-400">Hỗ trợ vẽ logo & slogan</p>
+                    </div>
+                </div>
+                <div class="bg-brand-card border border-brand-border p-4 rounded-xl flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-brand-yellow/10 text-brand-yellow rounded-lg flex items-center justify-center text-lg shrink-0">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs text-white">Chất Liệu Đạt Chuẩn</h4>
+                        <p class="text-[11px] text-gray-400">Bền bỉ - An toàn sức khỏe</p>
+                    </div>
+                </div>
+                <div class="bg-brand-card border border-brand-border p-4 rounded-xl flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-brand-yellow/10 text-brand-yellow rounded-lg flex items-center justify-center text-lg shrink-0">
+                        <i class="fas fa-truck-fast"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs text-white">Giao Hàng Nhanh</h4>
+                        <p class="text-[11px] text-gray-400">Nội thành BMT & Toàn quốc</p>
+                    </div>
+                </div>
+                <div class="bg-brand-card border border-brand-border p-4 rounded-xl flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-brand-yellow/10 text-brand-yellow rounded-lg flex items-center justify-center text-lg shrink-0">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs text-white">Giá Tại Xưởng</h4>
+                        <p class="text-[11px] text-gray-400">Ưu đãi cho số lượng lớn</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRODUCT SECTION -->
         <section class="max-w-7xl mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
                 <h2 class="text-xl font-black text-white uppercase">MẪU IN ẤN NỔI BẬT</h2>
             </div>
+            
             <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div class="col-span-full text-center py-12 text-gray-500">
                     <i class="fas fa-spinner fa-spin text-2xl mb-2 text-brand-yellow"></i>
@@ -73,30 +116,33 @@
             </div>
         </section>
 
-        <!-- Quick Quote Form -->
+        <!-- Quick Order / Quote Form -->
         <section id="quick-quote" class="max-w-3xl mx-auto px-4">
             <div class="bg-brand-card border border-brand-border p-6 sm:p-8 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div class="absolute -top-12 -right-12 w-32 h-32 bg-brand-yellow/5 rounded-full blur-2xl"></div>
+                
                 <div class="text-center mb-6">
                     <span class="text-brand-yellow font-bold text-xs uppercase tracking-widest">ĐẶT IN NHANH CHÓNG</span>
                     <h3 class="text-2xl font-black text-white mt-1">GỬI YÊU CẦU BÁO GIÁ</h3>
+                    <p class="text-xs text-gray-400 mt-1">Gửi thông tin ngay, nhân viên tư vấn sẽ liên hệ lại Zalo báo giá trong 5 phút!</p>
                 </div>
 
                 <form onsubmit="handleOrderSubmit(event)" class="space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Họ và tên *</label>
-                            <input type="text" id="order-fullname" required placeholder="Nhập tên của bạn" class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-yellow">
+                            <input type="text" id="order-fullname" required placeholder="Nhập tên của bạn" class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-yellow transition">
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Số điện thoại / Zalo *</label>
-                            <input type="tel" id="order-phone" required placeholder="Nhập SĐT để nhận báo giá" class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-yellow">
+                            <input type="tel" id="order-phone" required placeholder="Nhập SĐT để nhận báo giá" class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-yellow transition">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Sản phẩm cần in *</label>
-                            <select id="order-product" required class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-yellow">
+                            <select id="order-product" required class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-yellow transition">
                                 <option value="">-- Chọn loại sản phẩm --</option>
                                 <option value="Ly Nhựa PP/PET">In Ly Nhựa (PP, PET)</option>
                                 <option value="Namecard / Card visit">In Namecard / Card Visit</option>
@@ -107,59 +153,53 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Số lượng dự kiến *</label>
-                            <input type="text" id="order-qty" required placeholder="VD: 1.000 cái..." class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-yellow">
+                            <input type="text" id="order-qty" required placeholder="VD: 1.000 cái, 5 hộp..." class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-yellow transition">
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Ghi chú yêu cầu</label>
-                        <textarea id="order-note" rows="3" placeholder="Ghi chú thêm..." class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-yellow"></textarea>
+                        <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Ghi chú yêu cầu / Link File Thiết Kế</label>
+                        <textarea id="order-note" rows="3" placeholder="Yêu cầu in ấn hoặc dán link Google Drive/Zalo chứa logo..." class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-yellow transition"></textarea>
                     </div>
 
-                    <button type="submit" id="submit-order-btn" class="w-full bg-brand-yellow hover:bg-brand-hover text-brand-dark font-black py-3.5 rounded-xl shadow transition text-sm uppercase flex items-center justify-center">
-                        <i class="fas fa-paper-plane mr-2"></i> Gửi Yêu Cầu Ngay
-                    </button>
+                    <div class="pt-2 flex flex-col sm:flex-row gap-3">
+                        <button type="submit" id="submit-order-btn" class="flex-1 bg-brand-yellow hover:bg-brand-hover text-brand-dark font-black py-3.5 rounded-xl shadow transition text-sm uppercase flex items-center justify-center">
+                            <i class="fas fa-paper-plane mr-2"></i> Gửi Yêu Cầu Ngay
+                        </button>
+                    </div>
                 </form>
             </div>
         </section>
     </main>
 
-    <!-- Modal Xem Chi Tiết Full -->
-    <div id="detail-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-        <div class="bg-brand-card border border-brand-border w-full max-w-lg rounded-2xl shadow-2xl p-6 space-y-4 max-h-[90vh] flex flex-col">
-            <div class="flex justify-between items-center border-b border-brand-border pb-3">
-                <h3 id="modal-title" class="text-lg font-bold text-white">Chi Tiết Sản Phẩm</h3>
-                <button onclick="closeDetailModal()" class="text-gray-400 hover:text-white text-lg"><i class="fas fa-times"></i></button>
+    <!-- Footer -->
+    <footer class="bg-brand-card border-t border-brand-border py-8 text-xs text-gray-400">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+            <div>
+                <p class="font-bold text-white text-sm">IN BAN MÊ - IN ẤN THEO YÊU CẦU</p>
+                <p class="mt-0.5">📍 Địa chỉ: Đường 10/3, Phường Buôn Ma Thuột, Tỉnh Đắk Lắk</p>
+                <p class="mt-0.5">📞 Hotline / Zalo đặt in: <a href="tel:0377441499" class="text-brand-yellow font-bold">0377.441.499</a></p>
             </div>
-            <div class="overflow-y-auto space-y-4 pr-1">
-                <div class="w-full h-56 bg-brand-dark rounded-xl overflow-hidden relative">
-                    <img id="modal-img" src="" class="w-full h-full object-cover">
-                </div>
-                <div>
-                    <span id="modal-category" class="text-[10px] bg-brand-dark border border-brand-border text-brand-yellow font-bold px-2.5 py-1 rounded-full uppercase"></span>
-                    <p id="modal-price" class="text-brand-yellow font-bold text-sm mt-2"></p>
-                </div>
-                <div>
-                    <h4 class="text-xs font-bold uppercase text-gray-400 mb-1">Mô tả sản phẩm:</h4>
-                    <p id="modal-desc" class="text-sm text-gray-200 whitespace-pre-line leading-relaxed"></p>
-                </div>
-            </div>
-            <div class="pt-3 border-t border-brand-border flex justify-end gap-2">
-                <button onclick="closeDetailModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:bg-brand-dark">Đóng</button>
-                <button id="modal-quote-btn" class="bg-brand-yellow text-brand-dark font-extrabold text-xs px-5 py-2.5 rounded-xl shadow">Đặt In Ngay</button>
+            <div class="text-gray-500 text-[11px]">
+                <p>© 2026 IN BAN MÊ. Mọi quyền được bảo lưu.</p>
+                <p class="mt-1">Hệ thống tự động bảo mật dữ liệu Khách hàng.</p>
             </div>
         </div>
-    </div>
+    </footer>
 
-    <!-- Toast Notification -->
+    <!-- Toast Notification UI -->
     <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <script>
         const API_BASE = 'https://in-ban-me.onrender.com/api';
         let products = [];
+        let sliderIntervals = [];
 
-        document.addEventListener('DOMContentLoaded', loadProducts);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+        });
 
+        // TẢI SẢN PHẨM TỪ BACKEND
         async function loadProducts() {
             try {
                 const res = await fetch(`${API_BASE}/products`);
@@ -169,105 +209,89 @@
                     renderProducts();
                 }
             } catch (err) {
-                console.error(err);
                 document.getElementById('product-grid').innerHTML = `
-                    <div class="col-span-full text-center py-8 text-yellow-400 bg-brand-card rounded-2xl border border-brand-border p-6">
-                        <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
-                        <p class="font-bold text-sm text-white">Đang khởi động lại Server...</p>
-                        <button onclick="loadProducts()" class="mt-3 bg-brand-yellow text-brand-dark px-4 py-2 rounded-xl text-xs font-bold">Tải lại trang</button>
+                    <div class="col-span-full text-center py-8 text-red-400">
+                        <i class="fas fa-exclamation-triangle text-xl mb-1"></i>
+                        <p class="font-bold text-sm">Máy chủ đang khởi động lại, vui lòng chờ trong giây lát...</p>
                     </div>
                 `;
+                setTimeout(loadProducts, 5000);
             }
         }
 
+        // HIỂN THỊ DỮ LIỆU SẢN PHẨM & TÍNH NĂNG TỰ ĐỘNG TRƯỢT ÂNH
         function renderProducts() {
             const container = document.getElementById('product-grid');
-            if (!products || products.length === 0) {
-                container.innerHTML = `<p class="col-span-full text-center text-gray-500 py-8">Chưa có sản phẩm nào.</p>`;
+
+            // Dọn dẹp bộ đếm thời gian cũ nếu có
+            sliderIntervals.forEach(clearInterval);
+            sliderIntervals = [];
+
+            if (products.length === 0) {
+                container.innerHTML = `<p class="col-span-full text-center text-gray-500 py-8">Chưa có sản phẩm nào trong danh mục này.</p>`;
                 return;
             }
 
-            container.innerHTML = products.map((p, index) => {
-                let img = p.images && p.images.length > 0 ? p.images[0] : (p.imageUrl || '');
-                if (img.startsWith('/uploads')) img = `https://in-ban-me.onrender.com${img}`;
-                if (!img) img = 'https://via.placeholder.com/300x200?text=In+Ban+Me';
+            container.innerHTML = products.map((p, pIndex) => {
+                let imageList = p.images && p.images.length > 0 ? p.images : (p.imageUrl ? [p.imageUrl] : []);
+                if (imageList.length === 0) {
+                    imageList = ['https://via.placeholder.com/300x200?text=In+Ban+Me'];
+                }
 
-                const descText = p.desc || p.description || '';
-                const isLong = descText.length > 55;
+                const imagesHTML = imageList.map(img => {
+                    let imgPath = img.startsWith('/uploads') ? `https://in-ban-me.onrender.com${img}` : img;
+                    return `<img src="${imgPath}" alt="${p.title}" class="w-full h-48 object-cover flex-shrink-0">`;
+                }).join('');
 
                 return `
-                    <div class="bg-brand-card border border-brand-border rounded-2xl p-4 flex flex-col justify-between hover:border-brand-yellow/50 transition duration-300">
+                    <div class="bg-brand-card border border-brand-border rounded-2xl p-4 flex flex-col justify-between hover:border-brand-yellow/50 transition duration-300 group">
                         <div>
-                            <div class="w-full h-48 bg-brand-dark rounded-xl overflow-hidden mb-4 relative cursor-pointer" onclick="openModal(${index})">
-                                <img src="${img}" class="w-full h-full object-cover">
-                                <span class="absolute top-2 right-2 text-[10px] bg-brand-dark/90 border border-brand-border text-brand-yellow font-bold px-2.5 py-1 rounded-full uppercase">
+                            <!-- Khung chứa Slider trượt ảnh -->
+                            <div class="w-full h-48 bg-brand-dark rounded-xl overflow-hidden mb-4 relative">
+                                <div id="slider-track-${pIndex}" class="flex w-full h-full transition-transform duration-500 ease-in-out">
+                                    ${imagesHTML}
+                                </div>
+                                <span class="absolute top-2 right-2 text-[10px] bg-brand-dark/90 backdrop-blur border border-brand-border text-brand-yellow font-bold px-2.5 py-1 rounded-full uppercase z-10">
                                     ${p.category || 'Dịch vụ'}
                                 </span>
                             </div>
-                            <h3 class="font-bold text-white text-base cursor-pointer hover:text-brand-yellow transition" onclick="openModal(${index})">${p.title}</h3>
-                            <div class="mt-2 text-xs text-gray-400">
-                                <p id="desc-text-${index}" class="line-clamp-2">${descText}</p>
-                                ${isLong ? `
-                                    <button id="toggle-btn-${index}" onclick="toggleDesc(${index})" class="text-brand-yellow hover:underline font-bold text-[11px] mt-1 inline-flex items-center">
-                                        <span>Xem thêm</span> <i class="fas fa-chevron-down text-[9px] ml-1"></i>
-                                    </button>
-                                ` : ''}
-                            </div>
-                        </div>
 
+                            <h3 class="font-bold text-white text-base group-hover:text-brand-yellow transition">${p.title}</h3>
+                            <p class="text-xs text-gray-400 mt-2 line-clamp-2">${p.desc || 'Chuyên nhận thiết kế & in ấn theo yêu cầu giá xưởng.'}</p>
+                        </div>
                         <div class="mt-4 pt-3 border-t border-brand-border flex items-center justify-between">
-                            <span class="text-xs text-brand-yellow font-bold">${p.priceNote || 'Báo giá'}</span>
-                            <a href="#quick-quote" onclick="selectProduct('${p.title}')" class="bg-brand-dark hover:bg-brand-yellow hover:text-brand-dark text-white border border-brand-border text-xs px-3 py-1.5 rounded-lg transition font-semibold">
+                            <span class="text-xs text-brand-yellow font-bold">${p.priceNote || 'Giá ưu đãi'}</span>
+                            <a href="#quick-quote" onclick="selectProductToQuote('${p.title}')" class="bg-brand-dark hover:bg-brand-yellow hover:text-brand-dark text-white border border-brand-border text-xs px-3 py-1.5 rounded-lg transition font-semibold">
                                 Đặt In
                             </a>
                         </div>
                     </div>
                 `;
             }).join('');
+
+            // Kích hoạt slider trượt tự động
+            startAutoSliders();
         }
 
-        function toggleDesc(index) {
-            const textEl = document.getElementById(`desc-text-${index}`);
-            const btnEl = document.getElementById(`toggle-btn-${index}`);
+        function startAutoSliders() {
+            products.forEach((p, pIndex) => {
+                const track = document.getElementById(`slider-track-${pIndex}`);
+                if (!track) return;
 
-            if (textEl.classList.contains('line-clamp-2')) {
-                textEl.classList.remove('line-clamp-2');
-                btnEl.innerHTML = `<span>Thu gọn</span> <i class="fas fa-chevron-up text-[9px] ml-1"></i>`;
-            } else {
-                textEl.classList.add('line-clamp-2');
-                btnEl.innerHTML = `<span>Xem thêm</span> <i class="fas fa-chevron-down text-[9px] ml-1"></i>`;
-            }
+                const totalImages = track.children.length;
+                if (totalImages <= 1) return;
+
+                let currentIndex = 0;
+                const interval = setInterval(() => {
+                    currentIndex = (currentIndex + 1) % totalImages;
+                    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                }, 3000); // Tự động trượt sau mỗi 3 giây
+
+                sliderIntervals.push(interval);
+            });
         }
 
-        function openModal(index) {
-            const p = products[index];
-            if (!p) return;
-
-            document.getElementById('modal-title').innerText = p.title;
-            document.getElementById('modal-category').innerText = p.category || 'Dịch vụ';
-            document.getElementById('modal-price').innerText = p.priceNote || 'Báo giá Zalo';
-            document.getElementById('modal-desc').innerText = p.desc || p.description || '';
-
-            let img = p.images && p.images.length > 0 ? p.images[0] : (p.imageUrl || '');
-            if (img.startsWith('/uploads')) img = `https://in-ban-me.onrender.com${img}`;
-            if (!img) img = 'https://via.placeholder.com/300x200?text=In+Ban+Me';
-            
-            document.getElementById('modal-img').src = img;
-
-            document.getElementById('modal-quote-btn').onclick = function() {
-                closeDetailModal();
-                selectProduct(p.title);
-                location.href = '#quick-quote';
-            };
-
-            document.getElementById('detail-modal').classList.remove('hidden');
-        }
-
-        function closeDetailModal() {
-            document.getElementById('detail-modal').classList.add('hidden');
-        }
-
-        function selectProduct(title) {
+        function selectProductToQuote(title) {
             const selectEl = document.getElementById('order-product');
             for (let i = 0; i < selectEl.options.length; i++) {
                 if (title.toLowerCase().includes(selectEl.options[i].value.toLowerCase())) {
@@ -278,10 +302,13 @@
             selectEl.value = 'Sản phẩm khác';
         }
 
+        // TẠO ĐƠN HÀNG MỚI
         async function handleOrderSubmit(e) {
             e.preventDefault();
+
             const btn = document.getElementById('submit-order-btn');
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Đang gửi...`;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Đang gửi đơn...`;
             btn.disabled = true;
 
             const payload = {
@@ -298,32 +325,50 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
+                
                 const data = await res.json();
+                
                 if (res.ok && data.success) {
-                    showToast('Tạo yêu cầu thành công!', 'success');
+                    const orderId = (data.data._id || data.data.id || '').slice(-6).toUpperCase();
+                    showToast(`Gửi đơn thành công! Mã đơn: #${orderId}`, 'success');
                     e.target.reset();
                 } else {
-                    showToast('Lỗi gửi yêu cầu', 'error');
+                    showToast(data.message || 'Có lỗi xảy ra khi lưu đơn hàng', 'error');
                 }
             } catch (err) {
-                showToast('Lỗi kết nối máy chủ', 'error');
+                console.error("Lỗi gửi đơn:", err);
+                showToast('Không thể kết nối đến máy chủ! Vui lòng thử lại sau 30 giây.', 'error');
             } finally {
-                btn.innerHTML = `<i class="fas fa-paper-plane mr-2"></i> Gửi Yêu Cầu Ngay`;
+                btn.innerHTML = originalText;
                 btn.disabled = false;
             }
         }
 
         function sendDirectZalo() {
-            window.open(`https://zalo.me/0377441499`, '_blank');
+            const phone = document.getElementById('order-phone').value || '';
+            const product = document.getElementById('order-product').value || 'In ấn';
+            const note = document.getElementById('order-note').value || '';
+            const message = `Chào In Ban Mê, tôi cần tư vấn báo giá: ${product}. SĐT: ${phone}. Ghi chú: ${note}`;
+            window.open(`https://zalo.me/0377441499?text=${encodeURIComponent(message)}`, '_blank');
         }
 
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
+            const isSuccess = type === 'success';
+            const bgColor = isSuccess ? 'bg-emerald-600' : 'bg-red-600';
+            const icon = isSuccess ? 'fa-circle-check' : 'fa-circle-xmark';
+
             const toast = document.createElement('div');
-            toast.className = `${type === 'success' ? 'bg-emerald-600' : 'bg-red-600'} text-white px-5 py-3 rounded-xl shadow-2xl text-sm font-semibold transition-all`;
-            toast.innerHTML = message;
+            toast.className = `${bgColor} text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform translate-y-[-10px] opacity-0 pointer-events-auto border border-white/20`;
+            toast.innerHTML = `<i class="fas ${icon} text-lg"></i><span class="text-sm font-semibold">${message}</span>`;
+
             container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3500);
+
+            setTimeout(() => { toast.classList.remove('translate-y-[-10px]', 'opacity-0'); }, 10);
+            setTimeout(() => {
+                toast.classList.add('translate-y-[-10px]', 'opacity-0');
+                setTimeout(() => toast.remove(), 400);
+            }, 3500);
         }
     </script>
 </body>
