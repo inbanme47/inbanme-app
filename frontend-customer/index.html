@@ -175,7 +175,7 @@
     <!-- MODAL XEM CHI TIẾT SẢN PHẨM & MÔ TẢ ĐẦY ĐỦ -->
     <div id="product-detail-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden overflow-y-auto">
         <div class="bg-brand-card border border-brand-border w-full max-w-2xl rounded-2xl shadow-2xl p-6 relative max-h-[90vh] flex flex-col">
-            <button onclick="closeProductDetailModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg z-10 w-8 h-8 bg-brand-dark/80 rounded-full flex items-center justify-center">
+            <button onclick="closeProductDetailModal()" class="absolute top-1 right-1 text-gray-600 hover:text-white text-lg z-10 w-4 h-4 bg-brand-dark/80 rounded-full flex items-center justify-center ">
                 <i class="fas fa-times"></i>
             </button>
 
@@ -277,7 +277,7 @@
                             <h3 class="font-bold text-white text-base group-hover:text-brand-yellow transition cursor-pointer" onclick="openProductDetailModal(${pIndex})">${p.title}</h3>
                             <p class="text-xs text-gray-400 mt-2 line-clamp-2">${shortDesc}</p>
                             <button onclick="openProductDetailModal(${pIndex})" class="text-xs text-brand-yellow font-bold mt-1 inline-flex items-center hover:underline focus:outline-none">
-                                Xem thêm <i class="fas fa-chevron-right text-[10px] ml-1"></i>
+                                Chi tiết <i class="fas fa-chevron-right text-[10px] ml-1"></i>
                             </button>
                         </div>
                         <div class="mt-4 pt-3 border-t border-brand-border flex items-center justify-between">
