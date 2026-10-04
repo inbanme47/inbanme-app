@@ -120,9 +120,10 @@ app.post('/api/orders', (req, res, next) => {
 // 2. API CHO QUẢN TRỊ VIÊN (ADMIN API)
 // ==========================================
 
+// Lấy danh sách đơn hàng active (Loại bỏ các đơn đã ARCHIVED)
 app.get('/api/admin/orders', async (req, res) => {
     try {
-        const orders = await Order.find().sort({ createdAt: -1 });
+        const orders = await Order.find({ status: { $ne: 'ARCHIVED' } }).sort({ createdAt: -1 });
         res.json({ success: true, data: orders });
     } catch (error) {
         res.status(500).json({ success: false, message: "Lỗi khi lấy danh sách đơn hàng" });
@@ -172,12 +173,17 @@ app.delete('/api/admin/products/:id', async (req, res) => {
     }
 });
 
+// Chuyển tất cả các đơn COMPLETED thành ARCHIVED thay vì xóa hẳn khỏi database
 app.post('/api/admin/orders/archive-completed', async (req, res) => {
     try {
-        const result = await Order.deleteMany({ status: 'COMPLETED' });
-        res.json({ success: true, archivedCount: result.deletedCount });
+        const result = await Order.updateMany(
+            { status: 'COMPLETED' },
+            { $set: { status: 'ARCHIVED' } }
+        );
+        res.json({ success: true, archivedCount: result.modifiedCount });
     } catch (error) {
-        res.status(500).json({ success: false, message: "Lỗi khi dọn dẹp đơn hoàn thành" });
+        console.error("Lỗi khi lưu trữ đơn hoàn thành:", error);
+        res.status(500).json({ success: false, message: "Lỗi khi lưu trữ đơn hoàn thành" });
     }
 });
 

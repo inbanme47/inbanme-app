@@ -89,7 +89,7 @@
 
             <div class="flex items-center space-x-3">
                 <button onclick="handleRefreshData()" class="bg-brand-yellow hover:bg-brand-hover text-brand-dark font-extrabold text-xs px-3.5 py-2 rounded-xl transition flex items-center shadow">
-                    <i class="fas fa-rotate mr-1.5"></i> Làm Mới Dữ Liệu
+                    <i class="fas fa-rotate mr-1.5"></i> Lưu Trữ & Làm Mới
                 </button>
                 <button onclick="handleLogout()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 font-extrabold text-xs px-3.5 py-2 rounded-xl transition flex items-center">
                     <i class="fas fa-sign-out-alt mr-1.5"></i> Đăng Xuất
@@ -368,7 +368,7 @@
                 const result = await response.json();
                 
                 if (result.success && result.archivedCount > 0) {
-                    showToast(`Đã lưu trữ ${result.archivedCount} đơn hoàn thành!`);
+                    showToast(`Đã lưu trữ thành công ${result.archivedCount} đơn hoàn thành vào Database!`);
                 } else {
                     showToast('Đã cập nhật dữ liệu mới nhất');
                 }

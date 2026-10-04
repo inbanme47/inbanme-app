@@ -8,7 +8,8 @@ const orderSchema = new mongoose.Schema({
     quantity: { type: String, required: true },
     note: { type: String, default: '' },
     fileUrl: { type: String, default: '' },
-    status: { type: String, enum: ['NEW', 'PROCESSING', 'COMPLETED'], default: 'NEW' }
+    // Đã thêm trạng thái 'ARCHIVED' để phục vụ lưu trữ vĩnh viễn
+    status: { type: String, enum: ['NEW', 'PROCESSING', 'COMPLETED', 'ARCHIVED'], default: 'NEW' }
 }, { timestamps: true });
 
 // Schema Sản Phẩm Dịch Vụ
