@@ -250,8 +250,7 @@
                 }
 
                 const imagesHTML = imageList.map(img => {
-                    let imgPath = img.startsWith('/uploads') ? `https://in-ban-me.onrender.com${img}` : img;
-                    return `<img src="${imgPath}" alt="${p.title}" class="w-full h-48 object-cover flex-shrink-0">`;
+                    return `<img src="${img}" alt="${p.title}" class="w-full h-48 object-cover flex-shrink-0">`;
                 }).join('');
 
                 const shortDesc = p.desc || 'Chuyên nhận thiết kế & in ấn theo yêu cầu giá xưởng.';
@@ -335,10 +334,9 @@
             }
 
             const imagesHTML = imageList.map(img => {
-                let imgPath = img.startsWith('/uploads') ? `https://in-ban-me.onrender.com${img}` : img;
                 return `
                     <div class="rounded-xl overflow-hidden border border-brand-border bg-brand-dark">
-                        <img src="${imgPath}" alt="${product.title}" class="w-full h-64 sm:h-80 object-cover">
+                        <img src="${img}" alt="${product.title}" class="w-full h-64 sm:h-80 object-cover">
                     </div>
                 `;
             }).join('');

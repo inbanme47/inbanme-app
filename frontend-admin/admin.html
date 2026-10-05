@@ -229,9 +229,9 @@
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-300 mb-1">Danh mục *</label>
                         <select id="prod-category" required class="w-full bg-brand-dark border border-brand-border text-white rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-brand-yellow">
-                            <option value="In Ly Nhựa">In Ly Nhựa</option>
+                            <option value="In Ly Nhựa">In Ly</option>
                             <option value="In Namecard">In Namecard</option>
-                            <option value="Bao Bì & Túi">Bao Bì & Túi</option>
+                            <option value="Bao Bì & Túi">In Bao Bì & Túi</option>
                             <option value="Tem Nhãn">Tem Nhãn / Thiệp</option>
                             <option value="Khác">Khác</option>
                         </select>
@@ -522,9 +522,6 @@
             container.innerHTML = products.map((p) => {
                 const prodId = p._id || p.id;
                 let firstImg = (p.images && p.images.length > 0) ? p.images[0] : (p.imageUrl || 'https://via.placeholder.com/300x200?text=In+Ban+Me');
-                if (firstImg.startsWith('/uploads')) {
-                    firstImg = `https://in-ban-me.onrender.com${firstImg}`;
-                }
 
                 const imageCount = (p.images && p.images.length > 0) ? p.images.length : 1;
 
@@ -610,10 +607,9 @@
 
             container.classList.remove('hidden');
             list.innerHTML = currentExistingImages.map((img, idx) => {
-                let fullPath = img.startsWith('/uploads') ? `https://in-ban-me.onrender.com${img}` : img;
                 return `
                     <div class="relative w-14 h-14 rounded-lg overflow-hidden border border-brand-border group">
-                        <img src="${fullPath}" class="w-full h-full object-cover">
+                        <img src="${img}" class="w-full h-full object-cover">
                         <button type="button" onclick="removeExistingImage(${idx})" title="Xóa ảnh này" class="absolute top-0.5 right-0.5 bg-red-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[9px] hover:bg-red-700 transition">
                             <i class="fas fa-times"></i>
                         </button>

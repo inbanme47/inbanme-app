@@ -6,6 +6,34 @@ const multer = require('multer');
 const mongoose = require('mongoose');
 const { Order, Product } = require('./models');
 
+// ==================== CẤU HÌNH CLOUDINARY & MULTER ====================
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
+// Cấu hình Cloudinary (sử dụng biến môi trường process.env)
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'TÊN_CLOUD_NAME_CỦA_BẠN',
+  api_key: process.env.CLOUDINARY_API_KEY || 'API_KEY_CỦA_BẠN',
+  api_secret: process.env.CLOUDINARY_API_SECRET || 'API_SECRET_CỦA_BẠN'
+});
+
+// Cấu hình Multer lưu trực tiếp lên Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'inbanme_products', // Tên thư mục lưu ảnh trên Cloudinary
+    allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
+  },
+});
+
+const upload = multer({ 
+    storage: storage,
+    limits: { 
+        fileSize: 10 * 1024 * 1024,
+        files: 20
+    }
+});
+
 const app = express();
 
 app.use(cors());
@@ -17,33 +45,6 @@ const adminDir = path.join(__dirname, '..', 'frontend-admin');
 
 app.use(express.static(customerDir));
 app.use(express.static(adminDir));
-
-// Thư mục lưu tệp tải lên
-const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname) || '.jpg';
-        cb(null, 'prod-' + uniqueSuffix + ext);
-    }
-});
-
-const upload = multer({ 
-    storage: storage,
-    limits: { 
-        fileSize: 10 * 1024 * 1024,
-        files: 20
-    }
-});
-
-app.use('/uploads', express.static(uploadDir));
 
 const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/inbanme";
 mongoose.connect(MONGO_URI)
@@ -73,6 +74,7 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
+// 1. API ĐẶT HÀNG (/api/orders)
 app.post('/api/orders', (req, res, next) => {
     upload.single('file')(req, res, (err) => {
         if (err) console.error("Multer error:", err);
@@ -94,8 +96,9 @@ app.post('/api/orders', (req, res, next) => {
             note: note || '' 
         };
         
+        // CẬP NHẬT: Lấy URL trực tiếp từ Cloudinary
         if (req.file) {
-            orderData.fileUrl = `/uploads/${req.file.filename}`;
+            orderData.fileUrl = req.file.path; 
         }
         
         const newOrder = new Order(orderData);
@@ -141,8 +144,7 @@ app.delete('/api/admin/orders/:id', async (req, res) => {
     }
 });
 
-// API ADMIN - SẢN PHẨM
-// 1. Thêm mới
+// 2. API THÊM SẢN PHẨM (/api/admin/products)
 app.post('/api/admin/products', (req, res) => {
     upload.array('images', 20)(req, res, async (err) => {
         if (err) {
@@ -157,8 +159,9 @@ app.post('/api/admin/products', (req, res) => {
             const { title, category, priceNote, desc } = req.body;
             
             let images = [];
+            // CẬP NHẬT: Lấy URL mảng ảnh trực tiếp từ Cloudinary
             if (req.files && req.files.length > 0) {
-                images = req.files.map(f => `/uploads/${f.filename}`);
+                images = req.files.map(f => f.path);
             } else {
                 images = ['https://via.placeholder.com/300x200?text=In+Ban+Me'];
             }
@@ -177,7 +180,7 @@ app.post('/api/admin/products', (req, res) => {
     });
 });
 
-// 2. Cập nhật/Sửa sản phẩm
+// 3. API CẬP NHẬT SẢN PHẨM (/api/admin/products/:id/update)
 app.post('/api/admin/products/:id/update', (req, res) => {
     upload.array('images', 20)(req, res, async (err) => {
         if (err) {
@@ -212,8 +215,9 @@ app.post('/api/admin/products/:id/update', (req, res) => {
                 finalImages = product.images || [];
             }
 
+            // CẬP NHẬT: Ghép danh sách URL Cloudinary mới vào mảng ảnh hiện có
             if (req.files && req.files.length > 0) {
-                const newUploadedImages = req.files.map(f => `/uploads/${f.filename}`);
+                const newUploadedImages = req.files.map(f => f.path);
                 finalImages = finalImages.concat(newUploadedImages);
             }
 
@@ -244,7 +248,7 @@ app.post('/api/admin/products/:id/update', (req, res) => {
     });
 });
 
-// 3. Xóa sản phẩm
+// 4. API XÓA SẢN PHẨM
 app.delete('/api/admin/products/:id', async (req, res) => {
     try {
         await Product.findByIdAndDelete(req.params.id);
@@ -254,6 +258,7 @@ app.delete('/api/admin/products/:id', async (req, res) => {
     }
 });
 
+// 5. API LƯU TRỮ ĐƠN HOÀN THÀNH
 app.post('/api/admin/orders/archive-completed', async (req, res) => {
     try {
         const result = await Order.updateMany(
