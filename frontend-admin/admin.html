@@ -108,44 +108,48 @@
             </div>
         </div>
 
-        <!-- Dashboard Stats -->
+        <!-- Dashboard Stats (Có tính năng Click để lọc) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-brand-card border border-brand-border p-5 rounded-2xl flex items-center justify-between">
+            <!-- Ô 1: Tất cả đơn -->
+            <div onclick="filterOrdersByStatus('ALL')" class="bg-brand-card border border-brand-border hover:border-brand-yellow/50 cursor-pointer transition p-5 rounded-2xl flex items-center justify-between group">
                 <div>
-                    <p class="text-xs font-bold text-gray-400 uppercase">Tổng Đơn Hiện Tại</p>
+                    <p class="text-xs font-bold text-gray-400 group-hover:text-brand-yellow uppercase transition">Tổng Đơn Hiện Tại</p>
                     <p id="stat-total-orders" class="text-2xl font-black text-white mt-1">0</p>
                 </div>
-                <div class="w-12 h-12 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center text-xl">
+                <div class="w-12 h-12 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition">
                     <i class="fas fa-file-invoice"></i>
                 </div>
             </div>
 
-            <div class="bg-brand-card border border-brand-border p-5 rounded-2xl flex items-center justify-between">
+            <!-- Ô 2: Đơn mới cần báo giá -->
+            <div onclick="filterOrdersByStatus('NEW')" class="bg-brand-card border border-brand-border hover:border-brand-yellow/50 cursor-pointer transition p-5 rounded-2xl flex items-center justify-between group">
                 <div>
-                    <p class="text-xs font-bold text-gray-400 uppercase">Đơn Mới Cần Báo Giá</p>
+                    <p class="text-xs font-bold text-gray-400 group-hover:text-brand-yellow uppercase transition">Đơn Mới Cần Báo Giá</p>
                     <p id="stat-new-orders" class="text-2xl font-black text-brand-yellow mt-1">0</p>
                 </div>
-                <div class="w-12 h-12 bg-brand-yellow/10 text-brand-yellow rounded-xl flex items-center justify-center text-xl">
+                <div class="w-12 h-12 bg-brand-yellow/10 text-brand-yellow rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition">
                     <i class="fas fa-bell"></i>
                 </div>
             </div>
 
-            <div class="bg-brand-card border border-brand-border p-5 rounded-2xl flex items-center justify-between">
+            <!-- Ô 3: Đang in / xử lý -->
+            <div onclick="filterOrdersByStatus('PROCESSING')" class="bg-brand-card border border-brand-border hover:border-brand-yellow/50 cursor-pointer transition p-5 rounded-2xl flex items-center justify-between group">
                 <div>
-                    <p class="text-xs font-bold text-gray-400 uppercase">Đang In / Xử Lý</p>
+                    <p class="text-xs font-bold text-gray-400 group-hover:text-brand-yellow uppercase transition">Đang In / Xử Lý</p>
                     <p id="stat-processing-orders" class="text-2xl font-black text-orange-400 mt-1">0</p>
                 </div>
-                <div class="w-12 h-12 bg-orange-500/10 text-orange-400 rounded-xl flex items-center justify-center text-xl">
+                <div class="w-12 h-12 bg-orange-500/10 text-orange-400 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition">
                     <i class="fas fa-print"></i>
                 </div>
             </div>
 
-            <div class="bg-brand-card border border-brand-border p-5 rounded-2xl flex items-center justify-between">
+            <!-- Ô 4: Chuyển sang mục Sản phẩm dịch vụ -->
+            <div onclick="switchAdminTab('products')" class="bg-brand-card border border-brand-border hover:border-brand-yellow/50 cursor-pointer transition p-5 rounded-2xl flex items-center justify-between group">
                 <div>
-                    <p class="text-xs font-bold text-gray-400 uppercase">Sản Phẩm Dịch Vụ</p>
+                    <p class="text-xs font-bold text-gray-400 group-hover:text-brand-yellow uppercase transition">Sản Phẩm Dịch Vụ</p>
                     <p id="stat-total-products" class="text-2xl font-black text-emerald-400 mt-1">0</p>
                 </div>
-                <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-xl">
+                <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition">
                     <i class="fas fa-boxes-stacked"></i>
                 </div>
             </div>
@@ -164,7 +168,7 @@
         <!-- Tab 1: Orders -->
         <div id="admin-tab-orders" class="space-y-4">
             <div class="flex items-center justify-between">
-                <h3 class="text-lg font-bold text-white">Danh Sách Yêu Cầu Cần Xử Lý</h3>
+                <h3 id="orders-table-title" class="text-lg font-bold text-white">Danh Sách Tất Cả Đơn Đặt Hàng</h3>
                 <span class="text-xs text-gray-400">Tự động đồng bộ mỗi 5 giây</span>
             </div>
 
@@ -296,6 +300,7 @@
         let ordersData = [];
         let productsData = [];
         let currentExistingImages = [];
+        let currentFilterStatus = 'ALL'; // Trạng thái lọc đơn mặc định
 
         window.addEventListener('DOMContentLoaded', () => {
             checkAuthStatus();
@@ -335,7 +340,7 @@
             const pass = document.getElementById('login-password').value;
             const errorMsg = document.getElementById('login-error');
 
-            if (user === 'admin' && pass === '123456') {
+            if (user === 'Inbanme47@gmail.com' && pass === 'Minhhieu@2405') {
                 localStorage.setItem('adminToken', 'authenticated_token_inbanme');
                 errorMsg.classList.add('hidden');
                 showToast('Đăng nhập thành công!');
@@ -370,6 +375,23 @@
                 btnProducts.className = "pb-3 text-sm font-bold border-b-2 border-brand-yellow text-brand-yellow flex items-center transition";
                 btnOrders.className = "pb-3 text-sm font-bold border-b-2 border-transparent text-gray-400 hover:text-white flex items-center transition";
             }
+        }
+
+        // HÀM LỌC ĐƠN HÀNG KHI BẤM VÀO THẺ THỐNG KÊ
+        function filterOrdersByStatus(status) {
+            switchAdminTab('orders'); // Chuyển sang tab đơn hàng
+            currentFilterStatus = status;
+
+            const titleEl = document.getElementById('orders-table-title');
+            if (status === 'NEW') {
+                titleEl.innerText = "Danh Sách Đơn Mới Cần Báo Giá";
+            } else if (status === 'PROCESSING') {
+                titleEl.innerText = "Danh Sách Đơn Đang In / Xử Lý";
+            } else {
+                titleEl.innerText = "Danh Sách Tất Cả Đơn Đặt Hàng";
+            }
+
+            renderOrders(ordersData);
         }
 
         async function handleRefreshData() {
@@ -417,12 +439,19 @@
 
         function renderOrders(orders) {
             const tbody = document.getElementById('orders-table-body');
-            if (orders.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-500">Không có đơn đặt in nào cần xử lý.</td></tr>`;
+            
+            // Lọc danh sách đơn dựa vào thẻ đang chọn
+            let filteredOrders = orders;
+            if (currentFilterStatus !== 'ALL') {
+                filteredOrders = orders.filter(o => o.status === currentFilterStatus);
+            }
+
+            if (filteredOrders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-500">Không có đơn đặt in nào thuộc mục này.</td></tr>`;
                 return;
             }
 
-            tbody.innerHTML = orders.map(ord => {
+            tbody.innerHTML = filteredOrders.map(ord => {
                 let statusBadge = '';
                 if (ord.status === 'NEW') {
                     statusBadge = `<span class="bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/30 px-2.5 py-1 rounded-full text-[11px] font-bold">Mới tiếp nhận</span>`;
