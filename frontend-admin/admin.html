@@ -117,17 +117,17 @@
         <!-- Navigation Tabs -->
         <div class="flex border-b border-brand-border space-x-6">
             <button onclick="switchAdminTab('orders')" id="tab-btn-orders" class="pb-3 text-sm font-bold border-b-2 border-brand-yellow text-brand-yellow flex items-center transition">
-                <i class="fas fa-list-check mr-2"></i> Quản Lý Đơn & File Thiết Kế
+                <i class="fas fa-list-check mr-2"></i> Quản Lý Đơn Hàng
             </button>
             <button onclick="switchAdminTab('products')" id="tab-btn-products" class="pb-3 text-sm font-bold border-b-2 border-transparent text-gray-400 hover:text-white flex items-center transition">
-                <i class="fas fa-box mr-2"></i> Quản Lý Danh Mục Sản Phẩm
+                <i class="fas fa-box mr-2"></i> Quản Lý Sản Phẩm
             </button>
         </div>
 
         <!-- Tab 1: Orders -->
         <div id="admin-tab-orders" class="space-y-4">
             <div class="flex items-center justify-between">
-                <h3 id="orders-table-title" class="text-lg font-bold text-white">Danh Sách Đơn Đặt Hàng & Quản Lý File</h3>
+                <h3 id="orders-table-title" class="text-lg font-bold text-white">Danh Sách Đơn Đặt Hàng</h3>
                 <span class="text-xs text-gray-400">Tự động đồng bộ mỗi 5 giây</span>
             </div>
             <div class="bg-brand-card border border-brand-border rounded-2xl overflow-hidden shadow-xl">
@@ -139,7 +139,7 @@
                                 <th class="p-4">Khách Hàng</th>
                                 <th class="p-4">Sản Phẩm & SL</th>
                                 <th class="p-4">File Khách Gửi</th>
-                                <th class="p-4">File Hoàn Chỉnh (Trả Về)</th>
+                                <th class="p-4">File Hoàn Chỉnh (Mẫu in)</th>
                                 <th class="p-4">Trạng Thái</th>
                                 <th class="p-4 text-center">Thao Tác</th>
                             </tr>
@@ -176,7 +176,7 @@
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-300 mb-1.5">Chọn file thiết kế hoàn chỉnh *</label>
                     <input type="file" id="completed-file-input" required class="w-full bg-brand-dark border border-brand-border text-white text-xs rounded-xl px-3.5 py-2 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-brand-yellow file:text-brand-dark hover:file:bg-brand-hover">
-                    <p class="text-[10px] text-gray-400 mt-1">File này sẽ lưu trữ cùng thông tin đơn hàng và đánh dấu đơn là Hoàn thành.</p>
+                    <p class="text-[10px] text-gray-400 mt-1">Hỗ trợ các định dạng: ảnh (JPG, PNG), PDF, AI, CDR, RAR, ZIP...</p>
                 </div>
                 <div class="pt-2 flex justify-end space-x-2">
                     <button type="button" onclick="closeCompletedFileModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:bg-brand-dark">Hủy</button>
@@ -238,7 +238,7 @@
     <!-- Footer -->
     <footer class="bg-brand-card border-t border-brand-border py-6 text-xs text-gray-400">
         <div class="max-w-7xl mx-auto px-4 flex justify-between">
-            <p class="font-bold text-white text-sm">IN BAN MÊ - QUẢN TRỊ VIÊN</p>
+            <p class="font-bold text-white text-sm">IN BAN MÊ - QUẢN TRỊ VIÊN XƯỞNG IN</p>
             <p>© 2026 IN BAN MÊ Admin System.</p>
         </div>
     </footer>
