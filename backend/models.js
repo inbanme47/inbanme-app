@@ -1,17 +1,16 @@
 const mongoose = require('mongoose');
 
-// Schema Đơn Hàng
 const orderSchema = new mongoose.Schema({
     fullname: { type: String, required: true },
     phone: { type: String, required: true },
     product: { type: String, required: true },
     quantity: { type: String, required: true },
     note: { type: String, default: '' },
-    fileUrl: { type: String, default: '' },
+    fileUrl: { type: String, default: '' },            // File gốc / Mẫu thiết kế khách gửi
+    completedFileUrl: { type: String, default: '' },     // File thiết kế hoàn chỉnh Admin trả lại
     status: { type: String, enum: ['NEW', 'PROCESSING', 'COMPLETED', 'ARCHIVED'], default: 'NEW' }
 }, { timestamps: true });
 
-// Schema Sản Phẩm Dịch Vụ
 const productSchema = new mongoose.Schema({
     title: { type: String, required: true },
     category: { type: String, required: true },
