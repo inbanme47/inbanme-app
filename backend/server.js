@@ -54,7 +54,7 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
-// Khách gửi đơn hàng kèm file thiết kế/logo (nếu có)
+// Khách gửi đơn hàng kèm file thiết kế/logo và ghi chú
 app.post('/api/orders', upload.single('file'), async (req, res) => {
     try {
         const { fullname, phone, product, quantity, note } = req.body;
@@ -82,7 +82,7 @@ app.get('/api/admin/orders', async (req, res) => {
     }
 });
 
-// Admin cập nhật trạng thái đơn hàng
+// Admin cập nhật trạng thái đơn hàng thủ công
 app.patch('/api/admin/orders/:id/status', async (req, res) => {
     try {
         const updatedOrder = await Order.findByIdAndUpdate(req.params.id, { status: req.body.status }, { new: true });
@@ -92,21 +92,23 @@ app.patch('/api/admin/orders/:id/status', async (req, res) => {
     }
 });
 
-// ADMIN: Upload file thiết kế hoàn chỉnh trả lại cho khách
+// ADMIN: Upload hoặc cập nhật file hoàn chỉnh (CHỈ CẬP NHẬT FILE, GIỮ NGUYÊN TRẠNG THÁI HIỆN TẠI)
 app.post('/api/admin/orders/:id/upload-completed', upload.single('completedFile'), async (req, res) => {
     try {
         const orderId = req.params.id;
         if (!req.file) {
             return res.status(400).json({ success: false, message: "Chưa chọn file hoàn chỉnh để tải lên!" });
         }
+        
+        // Chỉ cập nhật URL file hoàn chỉnh, không đụng đến trường status
         const updatedOrder = await Order.findByIdAndUpdate(
             orderId, 
             { 
-                completedFileUrl: req.file.path,
-                status: 'COMPLETED' // Tự động chuyển trạng thái đơn sang Hoàn thành
+                completedFileUrl: req.file.path
             }, 
             { new: true }
         );
+
         if (!updatedOrder) return res.status(404).json({ success: false, message: "Không tìm thấy đơn hàng" });
         res.json({ success: true, data: updatedOrder, message: "Đã tải lên và lưu file hoàn chỉnh thành công!" });
     } catch (error) {
@@ -136,37 +138,7 @@ app.post('/api/admin/products', upload.array('images', 20), async (req, res) => 
         res.status(500).json({ success: false, message: "Lỗi lưu sản phẩm: " + error.message });
     }
 });
-// Đảm bảo route này tồn tại ở phía Server
-app.post('/api/admin/orders/:id/upload-completed', upload.single('completedFile'), async (req, res) => {
-    try {
-        const orderId = req.params.id;
-        if (!req.file) {
-            return res.status(400).json({ success: false, message: 'Không tìm thấy file tải lên!' });
-        }
-        
-        // Đường dẫn file trên Cloudinary (hoặc nơi lưu trữ của bạn)
-        const fileUrl = req.file.path; 
 
-        // Cập nhật vào Database và đổi trạng thái thành COMPLETED
-        const updatedOrder = await Order.findByIdAndUpdate(
-            orderId,
-            { 
-                completedFileUrl: fileUrl,
-                status: 'COMPLETED' 
-            },
-            { new: true }
-        );
-
-        if (!updatedOrder) {
-            return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng!' });
-        }
-
-        res.json({ success: true, data: updatedOrder });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, message: 'Lỗi server khi upload file' });
-    }
-});
 // Admin cập nhật sản phẩm
 app.post('/api/admin/products/:id/update', upload.array('images', 20), async (req, res) => {
     try {

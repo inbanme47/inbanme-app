@@ -105,12 +105,12 @@
                 </div>
                 <div class="w-12 h-12 bg-orange-500/10 text-orange-400 rounded-xl flex items-center justify-center text-xl"><i class="fas fa-print"></i></div>
             </div>
-            <div onclick="switchAdminTab('products')" class="bg-brand-card border border-brand-border hover:border-brand-yellow/50 cursor-pointer transition p-5 rounded-2xl flex items-center justify-between group">
+            <div onclick="filterOrdersByStatus('DELIVERING')" class="bg-brand-card border border-brand-border hover:border-brand-yellow/50 cursor-pointer transition p-5 rounded-2xl flex items-center justify-between group">
                 <div>
-                    <p class="text-xs font-bold text-gray-400 group-hover:text-brand-yellow uppercase">Sản Phẩm Dịch Vụ</p>
-                    <p id="stat-total-products" class="text-2xl font-black text-emerald-400 mt-1">0</p>
+                    <p class="text-xs font-bold text-gray-400 group-hover:text-brand-yellow uppercase">Đang Giao Hàng</p>
+                    <p id="stat-delivering-orders" class="text-2xl font-black text-purple-400 mt-1">0</p>
                 </div>
-                <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-xl"><i class="fas fa-boxes-stacked"></i></div>
+                <div class="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-xl flex items-center justify-center text-xl"><i class="fas fa-shipping-fast"></i></div>
             </div>
         </div>
 
@@ -138,6 +138,7 @@
                                 <th class="p-4">Mã Đơn</th>
                                 <th class="p-4">Khách Hàng</th>
                                 <th class="p-4">Sản Phẩm & SL</th>
+                                <th class="p-4">Ghi Chú Khách</th>
                                 <th class="p-4">File Khách Gửi</th>
                                 <th class="p-4">File Hoàn Chỉnh (Mẫu in)</th>
                                 <th class="p-4">Trạng Thái</th>
@@ -145,7 +146,7 @@
                             </tr>
                         </thead>
                         <tbody id="orders-table-body" class="divide-y divide-brand-border">
-                            <tr><td colspan="7" class="p-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin text-xl mb-2 text-brand-yellow"></i><p>Đang tải đơn hàng...</p></td></tr>
+                            <tr><td colspan="8" class="p-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin text-xl mb-2 text-brand-yellow"></i><p>Đang tải đơn hàng...</p></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -306,7 +307,7 @@
 
         function filterOrdersByStatus(status) {
             switchAdminTab('orders'); currentFilterStatus = status;
-            document.getElementById('orders-table-title').innerText = status === 'NEW' ? "Đơn Mới Cần Báo Giá" : status === 'PROCESSING' ? "Đơn Đang In / Xử Lý" : "Danh Sách Đơn Đặt Hàng & Quản Lý File";
+            document.getElementById('orders-table-title').innerText = status === 'NEW' ? "Đơn Mới Cần Báo Giá" : status === 'PROCESSING' ? "Đơn Đang In / Xử Lý" : status === 'DELIVERING' ? "Đơn Đang Giao Hàng" : "Danh Sách Đơn Đặt Hàng & Quản Lý File";
             renderOrders(ordersData);
         }
 
@@ -330,16 +331,24 @@
         function renderOrders(orders) {
             const tbody = document.getElementById('orders-table-body');
             const filtered = currentFilterStatus === 'ALL' ? orders : orders.filter(o => o.status === currentFilterStatus);
-            if (filtered.length === 0) { tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-gray-500">Không có đơn đặt hàng nào.</td></tr>`; return; }
+            if (filtered.length === 0) { tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-gray-500">Không có đơn đặt hàng nào.</td></tr>`; return; }
 
             tbody.innerHTML = filtered.map(ord => {
-                let badge = ord.status === 'NEW' ? `<span class="bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/30 px-2.5 py-1 rounded-full text-[11px] font-bold">Mới</span>` : ord.status === 'PROCESSING' ? `<span class="bg-orange-500/10 text-orange-400 border border-orange-500/30 px-2.5 py-1 rounded-full text-[11px] font-bold">Đang in</span>` : `<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-full text-[11px] font-bold">Hoàn thành</span>`;
+                let badge = ord.status === 'NEW' 
+                    ? `<span class="bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/30 px-2.5 py-1 rounded-full text-[11px] font-bold">Mới</span>` 
+                    : ord.status === 'PROCESSING' 
+                    ? `<span class="bg-orange-500/10 text-orange-400 border border-orange-500/30 px-2.5 py-1 rounded-full text-[11px] font-bold">Đang in</span>` 
+                    : ord.status === 'DELIVERING' 
+                    ? `<span class="bg-purple-500/10 text-purple-400 border border-purple-500/30 px-2.5 py-1 rounded-full text-[11px] font-bold">Đang giao</span>` 
+                    : `<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-full text-[11px] font-bold">Hoàn thành</span>`;
+                
                 const id = ord._id || ord.id || '';
                 
-                // File khách gửi
+                // ĐÃ GIỚI HẠN CHIỀU RỘNG TỐI ĐA (max-w-[200px]) ĐỂ KHÔNG BỊ ĐẨY CỘT TRẠNG THÁI
+                let customerNoteHTML = ord.note ? `<div class="max-w-[200px]"><span class="text-xs text-gray-200 bg-brand-dark px-2.5 py-1.5 rounded border border-brand-border block break-words">${ord.note}</span></div>` : `<span class="text-xs text-gray-500 italic">Không có ghi chú</span>`;
+                
                 let customerFileHTML = ord.fileUrl ? `<a href="${ord.fileUrl}" target="_blank" class="text-xs text-brand-yellow hover:underline font-semibold flex items-center"><i class="fas fa-paperclip mr-1"></i> Xem file khách</a>` : `<span class="text-xs text-gray-500 italic">Không có file</span>`;
                 
-                // File hoàn chỉnh Admin trả về
                 let completedFileHTML = ord.completedFileUrl 
                     ? `<div class="space-y-1"><a href="${ord.completedFileUrl}" target="_blank" class="text-xs text-emerald-400 hover:underline font-bold flex items-center"><i class="fas fa-file-arrow-down mr-1"></i> Tải file hoàn chỉnh</a><button onclick="openUploadCompletedModal('${id}')" class="text-[10px] text-gray-400 hover:text-white underline block">Cập nhật lại</button></div>`
                     : `<button onclick="openUploadCompletedModal('${id}')" class="bg-brand-yellow/15 hover:bg-brand-yellow text-brand-yellow hover:text-brand-dark border border-brand-yellow/30 text-xs px-3 py-1.5 rounded-lg transition font-bold flex items-center"><i class="fas fa-upload mr-1.5"></i> Upload file</button>`;
@@ -349,6 +358,7 @@
                         <td class="p-4 font-mono font-bold text-white text-xs">#${id.slice(-6).toUpperCase()}</td>
                         <td class="p-4"><div class="font-bold text-white">${ord.fullname}</div><a href="https://zalo.me/${ord.phone}" target="_blank" class="text-xs text-brand-yellow hover:underline"><i class="fab fa-whatsapp mr-1"></i>${ord.phone}</a></td>
                         <td class="p-4"><div class="font-semibold text-white text-xs">${ord.product}</div><div class="text-xs text-gray-400">SL: ${ord.quantity}</div></td>
+                        <td class="p-4">${customerNoteHTML}</td>
                         <td class="p-4">${customerFileHTML}</td>
                         <td class="p-4">${completedFileHTML}</td>
                         <td class="p-4">${badge}</td>
@@ -357,6 +367,7 @@
                                 <select onchange="updateOrderStatus('${id}', this.value)" class="bg-brand-dark border border-brand-border text-xs rounded-lg px-2 py-1 text-gray-300">
                                     <option value="NEW" ${ord.status === 'NEW' ? 'selected' : ''}>Mới</option>
                                     <option value="PROCESSING" ${ord.status === 'PROCESSING' ? 'selected' : ''}>Đang in</option>
+                                    <option value="DELIVERING" ${ord.status === 'DELIVERING' ? 'selected' : ''}>Đang giao</option>
                                     <option value="COMPLETED" ${ord.status === 'COMPLETED' ? 'selected' : ''}>Hoàn thành</option>
                                 </select>
                                 <button onclick="deleteOrder('${id}')" class="text-gray-500 hover:text-red-400 p-1.5"><i class="fas fa-trash-alt"></i></button>
@@ -392,7 +403,6 @@
             formData.append('completedFile', fileInput.files[0]);
 
             try {
-                // Đã khớp đúng route /api/admin/orders/:id/upload-completed với backend
                 const res = await fetch(`${API_ADMIN}/orders/${orderId}/upload-completed`, {
                     method: 'POST',
                     body: formData
@@ -524,7 +534,7 @@
         async function deleteProduct(id) {
             if (confirm('Xóa sản phẩm này?')) {
                 const res = await fetch(`${API_ADMIN}/products/${id}`, { method: 'DELETE' });
-                if ((await res.json()).success) { showToast('Đã xóa'); loadProducts(); }
+                if ((await res.json()).success) { showToast('Đã xóa'); loadOrders(); }
             }
         }
 
@@ -532,7 +542,7 @@
             document.getElementById('stat-total-orders').innerText = ordersData.length;
             document.getElementById('stat-new-orders').innerText = ordersData.filter(o => o.status === 'NEW').length;
             document.getElementById('stat-processing-orders').innerText = ordersData.filter(o => o.status === 'PROCESSING').length;
-            document.getElementById('stat-total-products').innerText = productsData.length;
+            document.getElementById('stat-delivering-orders').innerText = ordersData.filter(o => o.status === 'DELIVERING').length;
         }
 
         function showToast(msg) {

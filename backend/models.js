@@ -6,9 +6,9 @@ const orderSchema = new mongoose.Schema({
     product: { type: String, required: true },
     quantity: { type: String, required: true },
     note: { type: String, default: '' },
-    fileUrl: { type: String, default: '' },            // File gốc / Mẫu thiết kế khách gửi
-    completedFileUrl: { type: String, default: '' },     // File thiết kế hoàn chỉnh Admin trả lại
-    status: { type: String, enum: ['NEW', 'PROCESSING', 'COMPLETED', 'ARCHIVED'], default: 'NEW' }
+    fileUrl: { type: String, default: '' },
+    completedFileUrl: { type: String, default: '' },
+    status: { type: String, enum: ['NEW', 'PROCESSING', 'DELIVERING', 'COMPLETED', 'ARCHIVED'], default: 'NEW' }
 }, { timestamps: true });
 
 const productSchema = new mongoose.Schema({
