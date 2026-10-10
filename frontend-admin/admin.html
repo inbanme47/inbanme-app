@@ -410,7 +410,7 @@
 
         function filterOrdersByStatus(status) {
             switchAdminTab('orders'); currentFilterStatus = status;
-            document.getElementById('orders-table-title').innerText = status === 'NEW' ? "Đơn Mới Cần Báo Giá" : status === 'PROCESSING' ? "Đơn Đang In / Xử Lý" : status === 'DELIVERING' ? "Đơn Đang Giao Hàng" : "Danh Sách Đơn Đặt Hàng & Quản Lý File";
+            document.getElementById('orders-table-title').innerText = status === 'NEW' ? "Đơn Mới Cần Báo Giá" : status === 'PROCESSING' ? "Đơn Đang In / Xử Lý" : status === 'DELIVERING' ? "Đơn Đang Giao Hàng" : "Danh Sách Đơn Đặt Hàng";
             renderOrders(ordersData);
         }
 
